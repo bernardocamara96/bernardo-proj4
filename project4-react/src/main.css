@@ -1,0 +1,35 @@
+* {
+   font-family: Helvetica, sans-serif;
+}
+
+#scrumMain {
+   display: flex;
+   flex-direction: row;
+
+   height: 87.5vh;
+   gap: 15px;
+}
+body {
+   background-color: rgba(5, 16, 46, 0.9);
+   height: 100%;
+}
+
+input {
+   padding: 10px;
+   border-radius: 5px;
+}
+#logo {
+   max-width: 88px;
+   height: auto;
+   display: flex;
+   margin-right: 20px;
+   margin-left: 20px;
+   cursor: pointer;
+}
+
+#scrum-content {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   padding-top: 5px;
+}
