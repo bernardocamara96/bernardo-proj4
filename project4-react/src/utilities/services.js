@@ -300,6 +300,50 @@ async function deleteTask(taskId, token) {
    });
 }
 
+async function addCategory(type, token) {
+   return await fetch(`${baseURL}category/add/${type}`, {
+      method: "POST",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
+async function deleteCategory(categoryType, token) {
+   return await fetch(`${baseURL}category/delete/${categoryType}`, {
+      method: "DELETE",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
+async function editCategory(categoryType, newCategoryType, token) {
+   return await fetch(`${baseURL}category/edit/${categoryType}/${newCategoryType}`, {
+      method: "PATCH",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
+async function restaureTask(taskId, token) {
+   return await fetch(`${baseURL}task/recycle/${taskId}`, {
+      method: "PATCH",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
 function orderTasks(tasks) {
    tasks.sort((a, b) => {
       if (a.priority > b.priority) {
@@ -361,4 +405,8 @@ export {
    loadTasksByUserAndCategory,
    loadDeletedTasks,
    deleteTask,
+   addCategory,
+   deleteCategory,
+   editCategory,
+   restaureTask,
 };

@@ -33,3 +33,10 @@ input {
    gap: 10px;
    padding-top: 5px;
 }
+
+#categories-list-main {
+   display: flex;
+   flex-direction: column;
+   gap: 0px;
+   height: 90%;
+}

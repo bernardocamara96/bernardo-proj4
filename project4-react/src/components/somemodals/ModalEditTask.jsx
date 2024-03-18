@@ -2,11 +2,11 @@ import "./ModalTasks.css";
 import { getAllCategories, addTaskBE } from "../../utilities/services";
 import { useEffect, useState } from "react";
 import ModalContent from "./ModalContent";
-import { editTaskBE, deleteListener } from "../../utilities/services";
+import { editTaskBE, deleteListener, deleteTask, restaureTask } from "../../utilities/services";
 import editPNG from "../../assets/edit.png";
 import { userStore, usernameStore } from "../../stores/userStore";
 
-export default function ModalEditTask({ data, setModalVisibility, setFetchTrigger }) {
+export default function ModalEditTask({ data, setModalVisibility, setFetchTrigger, modalType }) {
    const [categories, setCategories] = useState([]);
    const [newTaskTitle, setNewTaskTitle] = useState(data.title);
    const [newTaskDescription, setNewTaskDescription] = useState(data.description);
@@ -37,39 +37,66 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
    }, []);
    const handleSubmit = (e) => {
       e.preventDefault();
-      editTaskBE(
-         token,
-         data.id,
-         newTaskTitle,
-         newTaskDescription,
-         newTaskPriority,
-         newTaskStartDate,
-         newTaskEndDate,
-         newCategory_type
-      ).then((response) => {
-         if (response.ok) {
-            alert("Task updated successfully :)");
-            setModalVisibility(false);
-            setFetchTrigger((prev) => !prev);
-         } else {
-            console.error("Falha ao carregar tarefas:", response.statusText);
+      if (modalType !== "deletedTask") {
+         editTaskBE(
+            token,
+            data.id,
+            newTaskTitle,
+            newTaskDescription,
+            newTaskPriority,
+            newTaskStartDate,
+            newTaskEndDate,
+            newCategory_type
+         ).then((response) => {
+            if (response.ok) {
+               alert("Task updated successfully :)");
+               setModalVisibility(false);
+               setFetchTrigger((prev) => !prev);
+            } else {
+               console.error("Falha ao carregar tarefas:", response.statusText);
+            }
+         });
+      } else if (modalType === "deletedTask") {
+         if (confirm("Are you sure you want to restore this task?")) {
+            restaureTask(data.id, token).then((response) => {
+               if (response.ok) {
+                  setModalVisibility(false);
+                  setFetchTrigger((prev) => !prev);
+               } else {
+                  console.error("Falha ao carregar tarefas:", response.statusText);
+               }
+            });
          }
-      });
+      }
    };
 
    const handleDelete = (e) => {
       e.preventDefault();
-      if (!window.confirm("Are you sure you want to delete this task?")) {
-         return;
-      }
-      deleteListener(token, data.id).then((response) => {
-         if (response.ok) {
-            setModalVisibility(false);
-            setFetchTrigger((prev) => !prev);
-         } else {
-            console.error("Falha ao eliminar a tarefa:", response.statusText);
+      if (modalType !== "deletedTask") {
+         if (!window.confirm("Are you sure you want to delete this task?")) {
+            return;
          }
-      });
+         deleteListener(token, data.id).then((response) => {
+            if (response.ok) {
+               setModalVisibility(false);
+               setFetchTrigger((prev) => !prev);
+            } else {
+               console.error("Falha ao eliminar a tarefa:", response.statusText);
+            }
+         });
+      } else if (modalType === "deletedTask") {
+         if (!window.confirm("Are you sure you want to permanently delete this task?")) {
+            return;
+         }
+         deleteTask(data.id, token).then((response) => {
+            if (response.ok) {
+               setFetchTrigger((prev) => !prev);
+               setModalVisibility(false);
+            } else {
+               console.error("Falha ao eliminar a tarefa:", response.statusText);
+            }
+         });
+      }
    };
 
    return (
@@ -78,11 +105,12 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
             <form id="taskForm">
                <div className="row-task">
                   <h2 id="add-task">{inputDisabled ? "View Task" : "Edit Task"}</h2>
-                  {(role === "scrumMaster" || role === "productOwner" || username === data.username_author) && (
-                     <button id="edit-btn" type="button" onClick={() => setInputDisabled((prev) => !prev)}>
-                        <img id="edit-icon" src={editPNG} alt="Edit" />
-                     </button>
-                  )}
+                  {(role === "scrumMaster" || role === "productOwner" || username === data.username_author) &&
+                     modalType != "deletedTask" && (
+                        <button id="edit-btn" type="button" onClick={() => setInputDisabled((prev) => !prev)}>
+                           <img id="edit-icon" src={editPNG} alt="Edit" />
+                        </button>
+                     )}
                </div>
                <ModalContent
                   data={data}
@@ -111,6 +139,19 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
                         <div className="row-delete">
                            <button id="delete-task" onClick={handleDelete}>
                               Delete task
+                           </button>
+                        </div>
+                     </>
+                  )}
+
+                  {modalType === "deletedTask" && role === "productOwner" && (
+                     <>
+                        <div className="row-submit-edit">
+                           <input id="save-edit-task" type="submit" value="Restaure Task" onClick={handleSubmit} />
+                        </div>
+                        <div className="row-delete">
+                           <button id="delete-task" onClick={handleDelete}>
+                              Delete Permanently
                            </button>
                         </div>
                      </>

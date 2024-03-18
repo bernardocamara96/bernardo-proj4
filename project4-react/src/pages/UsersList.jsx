@@ -1,1 +1,40 @@
-export default function UsersList() {}
+import HeaderScrum from "../components/Headers/HeaderScrum";
+import AsideMenu from "../components/Menus/AsideMenu";
+import { useState, useEffect } from "react";
+import { userStore } from "../stores/userStore";
+import Footer from "../components/Footers/Footer";
+import { fetchPhotoNameAndRedirect } from "../utilities/services";
+
+export default function UsersList() {
+   const [photo, setPhoto] = useState("");
+   const [username, setUsername] = useState("");
+   const user = userStore.getState().user;
+
+   useEffect(() => {
+      if (user.token) {
+         fetchPhotoNameAndRedirect(user.token)
+            .then((response) => {
+               if (!response.ok) {
+                  throw new Error("Network response was not ok");
+               }
+               return response.json();
+            })
+            .then(function (data) {
+               setPhoto(data.photoUrl);
+               setUsername(data.name);
+            })
+            .catch((error) => {
+               console.error("Error fetching data:", error);
+            });
+      }
+   });
+   return (
+      <>
+         <HeaderScrum username={username} userPhoto={photo} />
+         <div id="main-taskList">
+            <AsideMenu type={user.role} />
+         </div>
+         <Footer />
+      </>
+   );
+}

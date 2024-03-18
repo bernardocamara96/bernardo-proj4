@@ -3,7 +3,7 @@ import "./task.css";
 import { deleteListener } from "../../utilities/services";
 import { userStore, usernameStore } from "../../stores/userStore";
 import { useState } from "react";
-import { updateTaskStatus, deleteTask } from "../../utilities/services";
+import { updateTaskStatus, deleteTask, restaureTask } from "../../utilities/services";
 
 export default function Task({
    id,
@@ -68,6 +68,17 @@ export default function Task({
       });
    };
 
+   const handleRestaure = (e) => {
+      if (confirm("Are you sure you want to restore this task?")) {
+         restaureTask(id, user.token).then((response) => {
+            if (response.ok) {
+               setFetchTrigger((prev) => !prev);
+            } else {
+               console.error("Falha ao atualizar o status da tarefa:", response.statusText);
+            }
+         });
+      }
+   };
    return (
       <>
          <div className="banner">
@@ -105,11 +116,19 @@ export default function Task({
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "260px"
                            : "285px"
+                        : status === "non-draggable"
+                        ? "200px"
                         : null,
                }}
             >
                {status === "TO DO" || status == "non-draggable" ? null : (
                   <button style={{ visibility: buttonVisibility }} children="<" onClick={handlePreviousButton}></button>
+               )}
+
+               {status === "non-draggable" && user.role === "productOwner" && (
+                  <button style={{ visibility: buttonVisibility }} onClick={handleRestaure}>
+                     &#x21bb;
+                  </button>
                )}
                {((status != "non-draggable" &&
                   (username_author === username || user.role === "productOwner" || user.role === "scrumMaster")) ||

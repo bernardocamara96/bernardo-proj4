@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { userStore } from "../stores/userStore";
 import { fetchPhotoNameAndRedirect } from "../utilities/services";
 import Footer from "../components/Footers/Footer";
+import AsideMenu from "../components/Menus/AsideMenu";
 
 export default function TaskList() {
    const user = userStore.getState().user;
@@ -31,7 +32,10 @@ export default function TaskList() {
    return (
       <>
          <HeaderScrum username={username} userPhoto={photo} />
-         <StandardList id="task-list" type="taskList" />
+         <div id="main-taskList">
+            <AsideMenu type={user.role} />
+            <StandardList id="task-list" type="taskList" />
+         </div>
          <Footer />
       </>
    );

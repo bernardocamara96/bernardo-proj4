@@ -57,6 +57,7 @@
    overflow-y: auto;
    text-align: center;
    align-content: flex-start;
+   transform: translate(170px, -20px);
 }
 
 .search-container {
@@ -71,8 +72,12 @@
    border-radius: 10px;
 }
 
+#taskSearch {
+   margin-right: 20px;
+}
+
 .search-container input[type="text"] {
-   width: 100%;
+   width: 70%;
    margin: 0;
    text-align: center;
    border: 0px;
@@ -81,7 +86,7 @@
 #DELETED_COLUMN {
    width: 100%;
    display: grid;
-   grid-gap: 15px; /* Espaçamento entre as tasks */
+
    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 

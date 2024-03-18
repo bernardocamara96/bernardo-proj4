@@ -61,7 +61,7 @@ ul {
 }
 
 #add-task-btn:hover {
-   box-shadow: 0px 0px 1px 1px black;
+   background-color: rgba(74, 74, 74, 0.707);
 }
 
 #add-task-btn {

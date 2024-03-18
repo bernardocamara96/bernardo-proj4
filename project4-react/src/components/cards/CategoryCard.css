@@ -10,11 +10,10 @@
    height: 75px;
 }
 .task-item-deleted {
-   width: 100%;
+   width: 92%;
 }
 
 .task-item-deleted {
-   cursor: pointer;
    padding-top: 10px;
 }
 
@@ -73,7 +72,7 @@
    border: white;
    border-radius: 25px;
    cursor: pointer;
-   transform: translate(102px, -5px);
+   transform: translate(99px, -5px);
    background-color: white;
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { userStore } from "../stores/userStore";
 import { fetchPhotoNameAndRedirect, loadCategories } from "../utilities/services";
 import Footer from "../components/Footers/Footer";
+import AsideMenu from "../components/Menus/AsideMenu";
 
 export default function CategoriesList() {
    const user = userStore.getState().user;
@@ -32,7 +33,10 @@ export default function CategoriesList() {
    return (
       <>
          <HeaderScrum username={username} userPhoto={photo} />
-         <StandardList type="categoriesList" />
+         <div id="main-taskList">
+            <AsideMenu type={user.role} />
+            <StandardList type="categoriesList" />
+         </div>
          <Footer />
       </>
    );
