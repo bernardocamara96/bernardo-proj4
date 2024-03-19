@@ -81,7 +81,17 @@ export default function Task({
    };
    return (
       <>
-         <div className="banner">
+         <div
+            className="banner"
+            style={{
+               backgroundColor:
+                  status === "TO DO"
+                     ? "rgb(0, 60, 255, 0.7)"
+                     : status === "DOING"
+                     ? "rgb(255,0,0,0.7)"
+                     : status === "DONE" && "rgb(0,128,0,0.65)",
+            }}
+         >
             <h3>{title.substring(0, 10)}</h3>
             <div className="category_author">
                <span style={{ marginRight: "30px" }}>{username_author.substring(0, 10)}</span>

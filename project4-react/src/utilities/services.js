@@ -344,6 +344,72 @@ async function restaureTask(taskId, token) {
    });
 }
 
+async function fetchUserDataByUsername(username, token) {
+   return await fetch(`${baseURL}user/userinfo/${username}`, {
+      method: "GET",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
+async function editOtherUser(token, username, role, firstName, lastName, oldEmail, email, phone, photoURL, isDeleted) {
+   let user = {
+      role: role,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phone,
+      photoURL: photoURL,
+      deleted: isDeleted,
+   };
+
+   if (email != oldEmail) user.email = email;
+
+   return await fetch(`${baseURL}user/editotheruser`, {
+      method: "PATCH",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+         userToChangeUsername: username,
+      },
+      body: JSON.stringify(user),
+   });
+}
+
+async function deletePermanentlyUser(token, userToDeleteUsername) {
+   try {
+      return await fetch(`${baseURL}user/permanetelydelete`, {
+         method: "DELETE",
+         headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            token: token,
+            userToDeleteUsername: userToDeleteUsername,
+         },
+      });
+   } catch (error) {
+      console.error("Error deleting user:", error);
+   }
+}
+
+async function deleteTasksByUser(token, userToDeleteUsername) {
+   try {
+      return await fetch(`${baseURL}task/deletetemp/all/${userToDeleteUsername}`, {
+         method: "DELETE",
+         headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            token: token,
+         },
+      });
+   } catch (error) {
+      console.error("Error deleting user tasks:", error);
+   }
+}
+
 function orderTasks(tasks) {
    tasks.sort((a, b) => {
       if (a.priority > b.priority) {
@@ -409,4 +475,8 @@ export {
    deleteCategory,
    editCategory,
    restaureTask,
+   fetchUserDataByUsername,
+   editOtherUser,
+   deletePermanentlyUser,
+   deleteTasksByUser,
 };

@@ -74,6 +74,9 @@ ul {
 
 .ul-tasks {
    min-height: 456.5px;
+   list-style-type: none;
+   padding-left: 20px;
+   padding-right: 20px;
 }
 
 #todo-count {

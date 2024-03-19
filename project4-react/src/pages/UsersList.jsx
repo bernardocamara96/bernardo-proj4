@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { userStore } from "../stores/userStore";
 import Footer from "../components/Footers/Footer";
 import { fetchPhotoNameAndRedirect } from "../utilities/services";
+import ListUsers from "../components/Lists/ListUsers";
 
 export default function UsersList() {
    const [photo, setPhoto] = useState("");
@@ -33,6 +34,7 @@ export default function UsersList() {
          <HeaderScrum username={username} userPhoto={photo} />
          <div id="main-taskList">
             <AsideMenu type={user.role} />
+            <ListUsers />
          </div>
          <Footer />
       </>

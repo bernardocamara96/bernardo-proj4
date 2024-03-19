@@ -72,7 +72,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
 
       fetchUsernames();
       fetchCategories();
-   }, []);
+   }, [fetchTrigger]);
 
    function cleanFilters() {
       setSelectedUsername("default");

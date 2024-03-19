@@ -40,3 +40,10 @@ input {
    gap: 0px;
    height: 90%;
 }
+
+.user-item {
+   margin-bottom: 10px;
+   width: 90%;
+   margin-left: 15px;
+   cursor: pointer;
+}
