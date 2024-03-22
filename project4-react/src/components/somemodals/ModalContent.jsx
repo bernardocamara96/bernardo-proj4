@@ -23,7 +23,14 @@ export default function ModalContent({
                <label className="input-label" id="label-author" htmlFor="author">
                   Author
                </label>
-               <input type="text" name="author" id="author_modal" value={username_author} disabled />
+               <input
+                  type="text"
+                  name="author"
+                  id="author_modal"
+                  value={username_author === "deletedTasks" ? "Deleted user" : username_author}
+                  disabled
+                  style={{ color: username_author === "deletedTasks" && "rgb(210, 0, 0)" }}
+               />
             </div>
          )}
 

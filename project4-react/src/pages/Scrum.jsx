@@ -6,14 +6,18 @@ import "../main.css";
 import { useEffect } from "react";
 import { fetchPhotoNameAndRedirect } from "../utilities/services";
 import { useState } from "react";
-import { userStore, usernameStore } from "../stores/userStore";
+import { userStore } from "../stores/userStore";
 import Filters from "../components/Filters/Filters.jsx";
+import { useNavigate } from "react-router-dom";
+import AlertsMessage from "../components/somemodals/messagesModal/AlertsMessage.jsx";
+import ConfirmMessage from "../components/somemodals/messagesModal/ConfirmMessage.jsx";
 
 export default function Scrum() {
    const user = userStore.getState().user;
    const updateRole = userStore((state) => state.updateRole);
    const [fetchTrigger, setFetchTrigger] = useState(false);
-
+   const navigate = useNavigate();
+   const [searchTermHome, setSearchTermHome] = useState("");
    const [photo, setPhoto] = useState("");
    const [username, setUsername] = useState("");
    const [TODOtasks, setTODOtasks] = useState([]);
@@ -25,6 +29,7 @@ export default function Scrum() {
          fetchPhotoNameAndRedirect(user.token)
             .then((response) => {
                if (!response.ok) {
+                  if (response.status === 403) navigate("/", { replace: true });
                   throw new Error("Network response was not ok");
                }
                return response.json();
@@ -37,6 +42,8 @@ export default function Scrum() {
             .catch((error) => {
                console.error("Error fetching data:", error);
             });
+      } else {
+         navigate("/", { replace: true });
       }
    });
 
@@ -47,13 +54,22 @@ export default function Scrum() {
             {user.role === "developer" ? null : <AsideMenu type={user.role} />}
             <div id="scrum-content">
                {user.role === "developer" ? null : (
-                  <Filters
-                     id="filters-scrum"
-                     tasks={{ TODOtasks, DOINGtasks, DONEtasks }}
-                     setTasks={{ setTODOtasks, setDOINGtasks, setDONEtasks }}
-                     fetchTrigger={fetchTrigger}
-                     setFetchTrigger={setFetchTrigger}
-                  />
+                  <div className="search-container-homepage" id="search-container-homepage">
+                     <input
+                        type="text"
+                        id="taskSearchHomepage"
+                        placeholder="🔍 Search tasks by title or description"
+                        value={searchTermHome}
+                        onChange={(e) => setSearchTermHome(e.target.value)}
+                     />
+                     <Filters
+                        id="filters-scrum"
+                        tasks={{ TODOtasks, DOINGtasks, DONEtasks }}
+                        setTasks={{ setTODOtasks, setDOINGtasks, setDONEtasks }}
+                        fetchTrigger={fetchTrigger}
+                        setFetchTrigger={setFetchTrigger}
+                     />
+                  </div>
                )}
                <ColumnsContainer
                   token={user.token}
@@ -61,11 +77,13 @@ export default function Scrum() {
                   setTasks={{ setTODOtasks, setDOINGtasks, setDONEtasks }}
                   fetchTrigger={fetchTrigger}
                   setFetchTrigger={setFetchTrigger}
+                  searchTerm={searchTermHome}
                />
             </div>
          </main>
-
          <Footer />
+         <AlertsMessage />
+         <ConfirmMessage />
       </>
    );
 }

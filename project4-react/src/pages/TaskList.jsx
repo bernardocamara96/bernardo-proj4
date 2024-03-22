@@ -5,6 +5,8 @@ import { userStore } from "../stores/userStore";
 import { fetchPhotoNameAndRedirect } from "../utilities/services";
 import Footer from "../components/Footers/Footer";
 import AsideMenu from "../components/Menus/AsideMenu";
+import AlertsMessage from "../components/somemodals/messagesModal/AlertsMessage";
+import ConfirmMessage from "../components/somemodals/messagesModal/ConfirmMessage";
 
 export default function TaskList() {
    const user = userStore.getState().user;
@@ -16,6 +18,7 @@ export default function TaskList() {
          fetchPhotoNameAndRedirect(user.token)
             .then((response) => {
                if (!response.ok) {
+                  if (response.status === 403) navigate("/", { replace: true });
                   throw new Error("Network response was not ok");
                }
                return response.json();
@@ -37,6 +40,8 @@ export default function TaskList() {
             <StandardList id="task-list" type="taskList" />
          </div>
          <Footer />
+         <AlertsMessage />
+         <ConfirmMessage />
       </>
    );
 }

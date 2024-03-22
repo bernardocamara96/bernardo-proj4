@@ -6,7 +6,7 @@ import ModalEditTask from "../somemodals/ModalEditTask.jsx";
 import { Droppable } from "react-beautiful-dnd";
 import DraggableTask from "../cards/DraggableTask";
 
-export default function Column({ title, token, tasks, setFetchTrigger, tasksNumber }) {
+export default function Column({ title, token, tasks, setFetchTrigger, tasksNumber, searchTerm }) {
    const [modalVisibility, setModalVisibility] = useState(false);
    const [modalEditVisibility, setModalEditVisibility] = useState(false);
    const [taskData, setTaskData] = useState({});
@@ -38,6 +38,7 @@ export default function Column({ title, token, tasks, setFetchTrigger, tasksNumb
                               {...component}
                               setFetchTrigger={setFetchTrigger}
                               status={title}
+                              searchTerm={searchTerm}
                            />
                         ))}
                         {provided.placeholder}

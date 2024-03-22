@@ -8,18 +8,18 @@ import {
    loadTasksByUser,
    loadTasksByCategory,
    loadTasksByUserAndCategory,
-   orderTasks,
 } from "../../utilities/services";
 import { useEffect, useState } from "react";
 import { userStore } from "../../stores/userStore";
+import filterStore from "../../stores/filterStore";
 
 export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger }) {
    const user = userStore.getState().user;
-
+   const { usernameFilter, updateUsernameFilter, categoryFilter, updateCategoryFilter } = filterStore.getState();
    const [usersSelect, setUsersSelect] = useState([]);
    const [categoriesSelect, setCategoriesSelect] = useState([]);
-   const [seletectedUsername, setSelectedUsername] = useState("default");
-   const [selectedCategory, setSelectedCategory] = useState("default");
+   const [seletectedUsername, setSelectedUsername] = useState(usernameFilter);
+   const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
 
    const { TODOtasks, DOINGtasks, DONEtasks } = tasks;
    const { setTODOtasks, setDOINGtasks, setDONEtasks } = setTasks;
@@ -75,6 +75,8 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
    }, [fetchTrigger]);
 
    function cleanFilters() {
+      updateUsernameFilter("default");
+      updateCategoryFilter("default");
       setSelectedUsername("default");
       setSelectedCategory("default");
       setFetchTrigger((prev) => !prev);
@@ -85,7 +87,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
          loadTasks(user.token).then((response) => {
             if (response.ok) {
                response.json().then((tasksFromServer) => {
-                  const tasks = orderTasks(tasksFromServer);
+                  const tasks = tasksFromServer;
 
                   auxiliarFilterFunction(tasks);
                });
@@ -99,7 +101,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
          loadTasksByUser(user.token, seletectedUsername).then((response) => {
             if (response.ok) {
                response.json().then((tasksFromServer) => {
-                  const tasks = orderTasks(tasksFromServer);
+                  const tasks = tasksFromServer;
 
                   auxiliarFilterFunction(tasks);
                });
@@ -113,7 +115,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
          loadTasksByCategory(user.token, selectedCategory).then((response) => {
             if (response.ok) {
                response.json().then((tasksFromServer) => {
-                  const tasks = orderTasks(tasksFromServer);
+                  const tasks = tasksFromServer;
 
                   auxiliarFilterFunction(tasks);
                });
@@ -127,7 +129,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
          loadTasksByUserAndCategory(user.token, seletectedUsername, selectedCategory).then((response) => {
             if (response.ok) {
                response.json().then((tasksFromServer) => {
-                  const tasks = orderTasks(tasksFromServer);
+                  const tasks = tasksFromServer;
                   auxiliarFilterFunction(tasks);
                });
             } else if (response.status === 403) {
@@ -156,7 +158,10 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
             className="homepage-filters"
             id="user-filter"
             value={seletectedUsername}
-            onChange={(e) => setSelectedUsername(e.target.value)}
+            onChange={(e) => {
+               setSelectedUsername(e.target.value);
+               updateUsernameFilter(e.target.value);
+            }}
          >
             <option value="default">All Users</option>
             {usersSelect.map((username) => (
@@ -169,7 +174,10 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
             className="homepage-filters"
             id="category-filter"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+               setSelectedCategory(e.target.value);
+               updateCategoryFilter(e.target.value);
+            }}
          >
             <option value="default">All Categories</option>
             {categoriesSelect.map((category) => (

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as encryptation from "../../utilities/encryptation.js";
 import { registerUser } from "../../utilities/services.js";
+import alertStore from "../../stores/alertStore";
 
 export default function RegisterForm({ type }) {
    const [role, setRole] = useState("developer");
@@ -17,41 +18,51 @@ export default function RegisterForm({ type }) {
    const [photo, setPhoto] = useState("");
    const navigate = useNavigate();
 
+   function handleAlert(message, error) {
+      alertStore.getState().setMessage(message);
+      alertStore.getState().setVisible(true);
+      alertStore.getState().setError(error);
+   }
+
    async function handleSubmit(e) {
       e.preventDefault();
-      let user = {
-         firstName: firstname,
-         lastName: lastname,
-         password: encryptation.encryptPassword(password),
-         phoneNumber: phone,
-         photoURL: photo,
-         email: email,
-         username: username,
-         role: role,
-      };
+      if (password === password2) {
+         let user = {
+            firstName: firstname,
+            lastName: lastname,
+            password: encryptation.encryptPassword(password),
+            phoneNumber: phone,
+            photoURL: photo,
+            email: email,
+            username: username,
+            role: role,
+         };
 
-      registerUser(user)
-         .then((response) => {
-            // Handle successful response
+         registerUser(user)
+            .then((response) => {
+               if (response.ok) {
+                  handleAlert("user created successfully :)", false);
 
-            alert("user is added successfully :)");
-            if (type === "productOwnerRegister") {
-               window.location.href = "projectSettingsUsers.html";
-            } else navigate("/", { replace: true });
-         })
-         .catch((status) => {
-            // Handle error response
-            if (status == 409) {
-               alert("username or email already exists :)");
-            } else {
-               alert("something went wrong :(");
-            }
-         });
+                  if (type === "productOwnerRegister") {
+                     navigate("/users", { replace: true });
+                  } else navigate("/", { replace: true });
+               }
+            })
+            .catch((status) => {
+               if (status == 409) {
+                  handleAlert("username or email already exists :)", true);
+               } else {
+                  handleAlert("something went wrong :(", true);
+               }
+            });
+      } else {
+         handleAlert("Passwords do not match :(", true);
+      }
    }
 
    return (
       <div id="register_container">
-         <form id="registrationForm" action="index.html" onSubmit={handleSubmit}>
+         <form id="registrationForm" onSubmit={handleSubmit}>
             <div className="banner_register">
                <img name="img_user" id="login-icon" src={userPNG} alt="IMG" />
                <p id="member-registration-banner">Member Registration</p>

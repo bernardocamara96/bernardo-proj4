@@ -1,17 +1,15 @@
-import StandardList from "../components/Lists/StandardList";
-import HeaderScrum from "../components/Headers/HeaderScrum";
-import { useState, useEffect } from "react";
 import { userStore } from "../stores/userStore";
-import { fetchPhotoNameAndRedirect, loadCategories } from "../utilities/services";
+import EditOwnProfile from "../components/Forms/EditOwnProfile";
+import HeaderScrum from "../components/Headers/HeaderScrum";
 import Footer from "../components/Footers/Footer";
-import AsideMenu from "../components/Menus/AsideMenu";
+import { useState, useEffect } from "react";
+import { fetchPhotoNameAndRedirect } from "../utilities/services";
 import AlertsMessage from "../components/somemodals/messagesModal/AlertsMessage";
-import ConfirmMessage from "../components/somemodals/messagesModal/ConfirmMessage";
 
-export default function CategoriesList() {
+export default function OwnUserEdit() {
    const user = userStore.getState().user;
-   const [photo, setPhoto] = useState("");
    const [username, setUsername] = useState("");
+   const [photo, setPhoto] = useState("");
 
    useEffect(() => {
       if (user.token) {
@@ -31,18 +29,13 @@ export default function CategoriesList() {
                console.error("Error fetching data:", error);
             });
       }
-   });
-
+   }, []);
    return (
       <>
          <HeaderScrum username={username} userPhoto={photo} />
-         <div id="main-taskList">
-            <AsideMenu type={user.role} />
-            <StandardList type="categoriesList" />
-         </div>
+         <EditOwnProfile />
          <Footer />
          <AlertsMessage />
-         <ConfirmMessage />
       </>
    );
 }

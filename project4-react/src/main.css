@@ -47,3 +47,19 @@ input {
    margin-left: 15px;
    cursor: pointer;
 }
+
+#search-container-homepage {
+   display: flex;
+   flex-direction: row;
+}
+
+#taskSearchHomepage {
+   border-radius: 5px;
+   height: 24px;
+   padding: 0px;
+   border: none;
+   margin-left: 300px;
+   width: 600px;
+   margin-right: 85px;
+   text-align: center;
+}

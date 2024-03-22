@@ -38,4 +38,10 @@
 
 input {
    padding: 4px;
+   border: none;
+}
+
+#role-field {
+   height: 24px;
+   border-radius: 5px;
 }

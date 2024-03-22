@@ -1,21 +1,20 @@
-main {
+#edit_container {
    display: flex;
-   flex-direction: column;
    justify-content: center;
    align-items: center;
+   margin-top: 60px;
+   margin-bottom: 58px;
 }
 
-#loginForm {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   margin-top: 50%;
+.editForm {
    width: 300px;
-   margin-bottom: 16px;
+   margin-left: 20px;
 }
 
-.banner_login {
+.passForm {
+   margin-bottom: 162px;
+}
+.banner_register {
    background-color: rgb(114, 114, 114);
    padding: 15px;
    text-align: center;
@@ -27,10 +26,10 @@ main {
    width: 90%;
 }
 
-.content_login {
+.content_register {
    display: flex;
    flex-direction: column;
-   gap: 10px;
+   gap: 5px;
    width: 90%;
    background-color: rgb(142, 142, 142);
    padding-left: 5%;
@@ -41,34 +40,32 @@ main {
    border-bottom-right-radius: 5px;
 }
 
-#login-icon {
-   max-width: 36px;
-   height: auto;
-   display: FLEX;
-   margin-right: 20px;
+input {
+   padding: 4px;
 }
 
-input[type="submit"] {
-   width: 100%;
+.btnChangePassword {
    background-color: rgb(142, 142, 142);
    border: solid;
    cursor: pointer;
+   padding: 4px;
+   border-radius: 5px;
+
+   margin-top: 10px;
 }
 
-input[type="submit"]:hover {
+#btnChangePassword:hover {
    background-color: rgb(114, 114, 114);
 }
 
-#signup {
-   color: white;
-   margin-bottom: 162px;
+#member-registration-banner {
+   font-weight: bold;
 }
 
-#a_registration {
-   color: grey;
-   cursor: pointer;
+#username-field {
+   color: black;
 }
 
-#a_registration:hover {
-   color: rgb(165, 165, 165);
+#registration {
+   margin-top: 15px;
 }

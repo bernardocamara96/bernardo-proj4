@@ -1,14 +1,21 @@
 import Column from "./Column";
 import "./ColumnsContainer.css";
 import { useEffect } from "react";
-import { loadTasks, orderTasks } from "../../utilities/services";
+import {
+   loadTasks,
+   updateTaskStatus,
+   loadTasksByUser,
+   loadTasksByCategory,
+   loadTasksByUserAndCategory,
+} from "../../utilities/services";
 import { userStore } from "../../stores/userStore";
 import { DragDropContext } from "react-beautiful-dnd";
-import { updateTaskStatus } from "../../utilities/services";
+import filterStore from "../../stores/filterStore";
 
-export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger, setFetchTrigger }) {
+export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger, setFetchTrigger, searchTerm }) {
    const { TODOtasks, DOINGtasks, DONEtasks } = tasks;
    const { setTODOtasks, setDOINGtasks, setDONEtasks } = setTasks;
+   const { usernameFilter, categoryFilter } = filterStore.getState();
 
    const user = userStore.getState().user;
 
@@ -39,13 +46,13 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
          // Update the state with the reordered tasks
          switch (destination.droppableId) {
             case "TO DO":
-               setTODOtasks(orderTasks(updatedTasks));
+               setTODOtasks(updatedTasks);
                break;
             case "DOING":
-               setDOINGtasks(orderTasks(updatedTasks));
+               setDOINGtasks(updatedTasks);
                break;
             case "DONE":
-               setDONEtasks(orderTasks(updatedTasks));
+               setDONEtasks(updatedTasks);
                break;
             default:
                return;
@@ -69,16 +76,15 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
          }
          sourceTasks.splice(source.index, 1);
 
-         // Update the state with the source column tasks
          switch (source.droppableId) {
             case "TO DO":
-               setTODOtasks(orderTasks(sourceTasks));
+               setTODOtasks(sourceTasks);
                break;
             case "DOING":
-               setDOINGtasks(orderTasks(sourceTasks));
+               setDOINGtasks(sourceTasks);
                break;
             case "DONE":
-               setDONEtasks(orderTasks(sourceTasks));
+               setDONEtasks(sourceTasks);
                break;
             default:
                return;
@@ -100,29 +106,76 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
 
    useEffect(() => {
       if (token) {
-         loadTasks(token).then((response) => {
-            if (response.ok) {
-               response.json().then((tasksFromServer) => {
-                  const tasks = orderTasks(tasksFromServer);
-                  console.log(tasks);
-                  const componentsByStatus = {
-                     TODO: tasks.filter((task) => task.status === 100),
-                     DOING: tasks.filter((task) => task.status === 200),
-                     DONE: tasks.filter((task) => task.status === 300),
-                  };
+         if (usernameFilter === "default" && categoryFilter === "default") {
+            loadTasks(token).then((response) => {
+               if (response.ok) {
+                  response.json().then((tasksFromServer) => {
+                     const tasks = tasksFromServer;
+                     console.log(tasks);
+                     auxiliarFilterFunction(tasks);
+                  });
+               } else if (response.status === 403) {
+                  console.log("You don't have permission to access this page. Please login again.");
+               } else {
+                  console.error("Falha ao carregar tarefas:", response.statusText);
+               }
+            });
+         } else if (usernameFilter !== "default" && categoryFilter === "default") {
+            loadTasksByUser(user.token, usernameFilter).then((response) => {
+               if (response.ok) {
+                  response.json().then((tasksFromServer) => {
+                     const tasks = tasksFromServer;
 
-                  setTODOtasks(componentsByStatus.TODO);
-                  setDOINGtasks(componentsByStatus.DOING);
-                  setDONEtasks(componentsByStatus.DONE);
-               });
-            } else if (response.status === 403) {
-               alert("You don't have permission to access this page. Please login again.");
-            } else {
-               console.error("Falha ao carregar tarefas:", response.statusText);
-            }
-         });
+                     auxiliarFilterFunction(tasks);
+                  });
+               } else if (response.status === 403) {
+                  alert("You don't have permission to access this page. Please login again.");
+               } else {
+                  console.error("Falha ao carregar tarefas:", response.statusText);
+               }
+            });
+         } else if (usernameFilter === "default" && categoryFilter !== "default") {
+            loadTasksByCategory(user.token, categoryFilter).then((response) => {
+               if (response.ok) {
+                  response.json().then((tasksFromServer) => {
+                     const tasks = tasksFromServer;
+
+                     auxiliarFilterFunction(tasks);
+                  });
+               } else if (response.status === 403) {
+                  alert("You don't have permission to access this page. Please login again.");
+               } else {
+                  console.error("Falha ao carregar tarefas:", response.statusText);
+               }
+            });
+         } else {
+            loadTasksByUserAndCategory(user.token, usernameFilter, categoryFilter).then((response) => {
+               if (response.ok) {
+                  response.json().then((tasksFromServer) => {
+                     const tasks = tasksFromServer;
+                     auxiliarFilterFunction(tasks);
+                  });
+               } else if (response.status === 403) {
+                  alert("You don't have permission to access this page. Please login again.");
+               } else {
+                  console.error("Falha ao carregar tarefas:", response.statusText);
+               }
+            });
+         }
       }
    }, [fetchTrigger]);
+
+   function auxiliarFilterFunction(tasks) {
+      const componentsByStatus = {
+         TODO: tasks.filter((task) => task.status === 100),
+         DOING: tasks.filter((task) => task.status === 200),
+         DONE: tasks.filter((task) => task.status === 300),
+      };
+
+      setTODOtasks(componentsByStatus.TODO);
+      setDOINGtasks(componentsByStatus.DOING);
+      setDONEtasks(componentsByStatus.DONE);
+   }
    return (
       <DragDropContext onDragEnd={handleDragEnd}>
          <div className="tasks-row" style={{ marginLeft: user.role === "developer" ? "150px" : "300px" }}>
@@ -132,14 +185,22 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
                tasks={TODOtasks}
                setFetchTrigger={setFetchTrigger}
                tasksNumber={TODOtasks.length}
+               searchTerm={searchTerm}
             />
             <Column
                title="DOING"
                tasks={DOINGtasks}
                setFetchTrigger={setFetchTrigger}
                tasksNumber={DOINGtasks.length}
+               searchTerm={searchTerm}
             />
-            <Column title="DONE" tasks={DONEtasks} setFetchTrigger={setFetchTrigger} tasksNumber={DONEtasks.length} />
+            <Column
+               title="DONE"
+               tasks={DONEtasks}
+               setFetchTrigger={setFetchTrigger}
+               tasksNumber={DONEtasks.length}
+               searchTerm={searchTerm}
+            />
          </div>
       </DragDropContext>
    );

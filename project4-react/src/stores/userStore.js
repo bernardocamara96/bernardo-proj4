@@ -26,6 +26,7 @@ const usernameStore = create(
       }),
       {
          name: "username-storage",
+         storage: createJSONStorage(() => sessionStorage),
       }
    )
 );

@@ -2,6 +2,7 @@ import "./ModalTasks.css";
 import { getAllCategories, addTaskBE } from "../../utilities/services";
 import { useEffect, useState } from "react";
 import ModalContent from "./ModalContent";
+import alertStore from "../../stores/alertStore";
 
 export default function ModalTasks({ token, setModalVisibility, setFetchTrigger }) {
    const [categories, setCategories] = useState([]);
@@ -11,6 +12,12 @@ export default function ModalTasks({ token, setModalVisibility, setFetchTrigger 
    const [taskStartDate, setTaskStartDate] = useState("");
    const [taskEndDate, setTaskEndDate] = useState("");
    const [category_type, setCategory_type] = useState("No_Category");
+
+   function handleAlert(message, error) {
+      alertStore.getState().setMessage(message);
+      alertStore.getState().setVisible(true);
+      alertStore.getState().setError(error);
+   }
 
    useEffect(() => {
       getAllCategories(token)
@@ -33,7 +40,6 @@ export default function ModalTasks({ token, setModalVisibility, setFetchTrigger 
       addTaskBE(token, taskTitle, taskDescription, taskPriority, taskStartDate, taskEndDate, category_type).then(
          function (response) {
             if (response.status == 201) {
-               alert("task is added successfully :)");
                setTaskTitle("");
                setTaskDescription("");
                setTaskPriority(1);
@@ -42,10 +48,14 @@ export default function ModalTasks({ token, setModalVisibility, setFetchTrigger 
                setCategory_type("No_Category");
                setFetchTrigger((prev) => !prev);
                setModalVisibility(false);
-            } else if (response.status == 401) {
-               alert("username not loged in");
+
+               handleAlert("Task added successfully!", false);
+            } else if (response.status == 400) {
+               handleAlert("Invalid data, please check the fields and try again", true);
             } else if (response.status == 403) {
-               alert("Acess Denied");
+               handleAlert("You don't have permission to add this task :(", true);
+            } else {
+               handleAlert("Error adding task :(", true);
             }
          }
       );

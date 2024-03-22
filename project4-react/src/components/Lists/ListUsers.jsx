@@ -9,12 +9,16 @@ import {
    deletePermanentlyUser,
    deleteTasksByUser,
 } from "../../utilities/services";
+import { useNavigate } from "react-router-dom";
+import alertStore from "../../stores/alertStore";
+import imagePlaceholder from "../../assets/placeholderform.png";
 
 export default function ListUsers() {
    const { token } = userStore.getState().user;
+   const userRole = userStore.getState().user.role;
    const [users, setUsers] = useState([]);
-   const [displayBackground, setDisplayBackground] = useState("none");
-   const [imageBackground, setImageBackground] = useState("../../assets/placeholderform.png");
+   const [displayBackground, setDisplayBackground] = useState("inline");
+   const [imageBackground, setImageBackground] = useState(imagePlaceholder);
    const [photo, setPhoto] = useState("");
    const [usernameClicked, setUsernameClicked] = useState("");
    const [isDeleted, setIsDeleted] = useState(false);
@@ -29,6 +33,11 @@ export default function ListUsers() {
    const [statusChangeTrigger, setStatusChangeTrigger] = useState(false);
    const [statusChange, setStatusChange] = useState(false);
    const [buttonsDisabled, setButtonsDisabled] = useState(true);
+   const [searchTerm, setSearchTerm] = useState("");
+   const navigate = useNavigate();
+   const { setConfirmMessage, setConfirmVisible, setConfirmCallback } = alertStore();
+   const [visibility, setVisibility] = useState("hidden");
+   const [backgroundColor, setBackgroundColor] = useState("transparent");
 
    useEffect(() => {
       loadUsers(token).then((response) => {
@@ -41,13 +50,21 @@ export default function ListUsers() {
       });
    }, [statusChangeTrigger]);
 
+   const handleAction = (message, callback) => {
+      setConfirmMessage(message);
+      setConfirmVisible(true);
+
+      setConfirmCallback(callback);
+   };
+
    function handleClick(username) {
-      setDisplayBackground("");
       setImageBackground("none");
       setActiveTrigger(!activeTrigger);
       setChangeTrigger(false);
       setStatusChange(false);
       setButtonsDisabled(false);
+      setVisibility("visible");
+      setBackgroundColor("transparent");
 
       fetchUserDataByUsername(username, token).then((response) => {
          if (!response.ok) {
@@ -67,6 +84,12 @@ export default function ListUsers() {
          });
       });
    }
+
+   function handleAlert(message, error) {
+      alertStore.getState().setMessage(message);
+      alertStore.getState().setVisible(true);
+      alertStore.getState().setError(error);
+   }
    function handleSubmit(e) {
       e.preventDefault();
 
@@ -84,37 +107,48 @@ export default function ListUsers() {
             isDeleted
          ).then((response) => {
             if (response.ok) {
-               alert("User edited");
                setChangeTrigger(false);
-
+               handleAlert("User edited :)", false);
                if (statusChange) {
                   setStatusChangeTrigger(!statusChangeTrigger);
                   setStatusChange(false);
                }
+            } else {
+               handleAlert("Error editing user :(", true);
             }
          });
-      } else alert("No changes were made");
+      } else {
+         handleAlert("No changes were made", true);
+      }
    }
 
    function handleDelete() {
-      if (confirm("Are you sure you want to delete this user?")) {
+      handleAction("Are you sure you want to delete this user?", () => {
          deletePermanentlyUser(token, usernameClicked).then((response) => {
             if (response.ok) {
-               alert("User deleted");
+               handleAlert("User deleted", false);
                setStatusChangeTrigger(!statusChangeTrigger);
+               setVisibility("hidden");
+               setButtonsDisabled(true);
+               setImageBackground(imagePlaceholder);
+               setBackgroundColor("rgba(5, 16, 46, 0.9)");
+            } else {
+               handleAlert("Error deleting user", true);
             }
          });
-      }
+      });
    }
 
    function handleDeleteTasks() {
-      if (confirm("Are you sure you want to delete all tasks from this user?")) {
+      handleAction("Are you sure you want to delete all the tasks from this user?", () => {
          deleteTasksByUser(token, usernameClicked).then((response) => {
             if (response.ok) {
-               alert("Tasks deleted");
+               handleAlert("Tasks deleted", false);
+            } else {
+               handleAlert("Error deleting tasks", true);
             }
          });
-      }
+      });
    }
    return (
       <div className="mainBoard-settings mainBoard-settings-users" id="mainBoard-settings">
@@ -124,10 +158,16 @@ export default function ListUsers() {
             <div className="box-container" id="box-users">
                <div className="col-user-list" id="col-users">
                   <div id="title-deleted-tasks">
-                     <h3 id="user-list">User List</h3>
+                     <h3 id="user-list">List of Users</h3>
                   </div>
                   <div className="search-container">
-                     <input type="text" id="userSearch" placeholder="🔍 Search" />
+                     <input
+                        type="text"
+                        id="userSearch"
+                        placeholder="🔍 Search by username"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                     />
                   </div>
                   <div className="scrolable-ul" id="User_COLUMN">
                      <ul className="ul-users">
@@ -147,6 +187,7 @@ export default function ListUsers() {
                                     handleClick={handleClick}
                                     activeTrigger={activeTrigger}
                                     statusChangeTrigger={statusChangeTrigger}
+                                    searchTerm={searchTerm}
                                  />
                               )
                         )}
@@ -154,8 +195,15 @@ export default function ListUsers() {
                   </div>
                </div>
                <div className="centralform" id="centralform">
-                  <form id="editProfileForm" style={{ backgroundImage: imageBackground }} onSubmit={handleSubmit}>
-                     <div id="individual-user-info" style={{ textAlign: "center", display: displayBackground }}>
+                  <form
+                     id="editProfileForm"
+                     style={{ backgroundImage: imageBackground, backgroundColor: backgroundColor }}
+                     onSubmit={handleSubmit}
+                  >
+                     <div
+                        id="individual-user-info"
+                        style={{ textAlign: "center", display: displayBackground, visibility: visibility }}
+                     >
                         <div className="content" id="content">
                            <div id="userImageContainer" style={{ textAlign: "center" }}>
                               <img
@@ -189,6 +237,7 @@ export default function ListUsers() {
                                  setPhone(e.target.value);
                                  setChangeTrigger(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            />
                            <label id="email-label" htmlFor="email-field">
                               Email
@@ -204,6 +253,7 @@ export default function ListUsers() {
                                  setNewEmail(e.target.value);
                                  setChangeTrigger(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            />
                            <label id="first-name-label" htmlFor="firstname-field">
                               First Name
@@ -219,6 +269,7 @@ export default function ListUsers() {
                                  setFirstName(e.target.value);
                                  setChangeTrigger(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            />
                            <label id="last-name-label" htmlFor="lastname-field">
                               Last Name
@@ -234,6 +285,7 @@ export default function ListUsers() {
                                  setLastName(e.target.value);
                                  setChangeTrigger(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            />
                            <label id="photo-label" htmlFor="photo-field">
                               Photography
@@ -250,6 +302,7 @@ export default function ListUsers() {
                                  setChangeTrigger(true);
                                  setStatusChange(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            />
 
                            <label id="role-label" htmlFor="role-field">
@@ -264,6 +317,7 @@ export default function ListUsers() {
                                  setChangeTrigger(true);
                                  setStatusChange(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            >
                               <option value="developer">Developer</option>
                               <option value="scrumMaster">Scrum Master</option>
@@ -281,32 +335,40 @@ export default function ListUsers() {
                                  setChangeTrigger(true);
                                  setStatusChange(true);
                               }}
+                              disabled={userRole === "productOwner" ? false : true}
                            >
                               <option value="false">Active</option>
                               <option value="true">Inactive</option>
                            </select>
-                           <div id="edit-submitDiv">
-                              <button type="submit" id="edit-submit">
-                                 Submit
-                              </button>
-                           </div>
+                           {userRole === "productOwner" && (
+                              <div id="edit-submitDiv">
+                                 <button type="submit" id="edit-submit">
+                                    Submit
+                                 </button>
+                              </div>
+                           )}
                         </div>
                      </div>
                   </form>
                </div>
-               <div className="other-options-user">
-                  <div className="other-functions-byUser">
-                     <button id="delete-permanently" onClick={handleDelete} disabled={buttonsDisabled}>
-                        Permanently delete
-                     </button>
-                     <button id="delete-task-by-user" onClick={handleDeleteTasks} disabled={buttonsDisabled}>
-                        Delete Tasks
-                     </button>
-                     <button id="add-user" disabled={buttonsDisabled}>
-                        Add User
-                     </button>
+               {userRole === "productOwner" && (
+                  <div className="other-options-user">
+                     <div className="other-functions-byUser">
+                        <button id="delete-permanently" onClick={handleDelete} disabled={buttonsDisabled}>
+                           Permanently delete
+                        </button>
+                        <button id="delete-task-by-user" onClick={handleDeleteTasks} disabled={buttonsDisabled}>
+                           Delete Tasks
+                        </button>
+                        <button
+                           id="add-user"
+                           onClick={() => navigate("/register", { state: { type: "productOwnerRegister" } })}
+                        >
+                           Add User
+                        </button>
+                     </div>
                   </div>
-               </div>
+               )}
             </div>
          </div>
       </div>

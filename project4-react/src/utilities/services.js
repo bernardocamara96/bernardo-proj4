@@ -410,7 +410,46 @@ async function deleteTasksByUser(token, userToDeleteUsername) {
    }
 }
 
-function orderTasks(tasks) {
+async function fetchUserData(token) {
+   return await fetch(`${baseURL}user/userinfo`, {
+      method: "GET",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+   });
+}
+
+async function editUserData(user, token) {
+   return await fetch(`${baseURL}user/edituserdata`, {
+      method: "PATCH",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+      body: JSON.stringify(user),
+   });
+}
+
+async function editPassword(oldPassword, newPassword, token) {
+   let userNewPassword = {
+      password: encryptation.encryptPassword(oldPassword),
+      newPassword: encryptation.encryptPassword(newPassword),
+   };
+   return await fetch(`${baseURL}user/edituserpassword`, {
+      method: "POST",
+      headers: {
+         Accept: "application/json",
+         "Content-Type": "application/json",
+         token: token,
+      },
+      body: JSON.stringify(userNewPassword),
+   });
+}
+
+/*function orderTasks(tasks) {
    tasks.sort((a, b) => {
       if (a.priority > b.priority) {
          return -1;
@@ -449,7 +488,7 @@ function orderTasks(tasks) {
       return 0;
    });
    return tasks;
-}
+}*/
 
 export {
    registerUser,
@@ -457,7 +496,6 @@ export {
    fetchPhotoNameAndRedirect,
    getAllCategories,
    addTaskBE,
-   orderTasks,
    editTaskBE,
    deleteListener,
    updateTaskStatus,
@@ -479,4 +517,7 @@ export {
    editOtherUser,
    deletePermanentlyUser,
    deleteTasksByUser,
+   fetchUserData,
+   editUserData,
+   editPassword,
 };

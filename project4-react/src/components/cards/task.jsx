@@ -2,7 +2,7 @@ import trashIcon from "../../assets/trashCanIcon.png";
 import "./task.css";
 import { deleteListener } from "../../utilities/services";
 import { userStore, usernameStore } from "../../stores/userStore";
-import { useState } from "react";
+import alertStore from "../../stores/alertStore";
 import { updateTaskStatus, deleteTask, restaureTask } from "../../utilities/services";
 
 export default function Task({
@@ -15,34 +15,52 @@ export default function Task({
    buttonVisibility,
    setFetchTrigger,
    status,
+   type,
 }) {
    const user = userStore.getState().user;
    const username = usernameStore.getState().username;
 
+   const { setConfirmMessage, setConfirmVisible, setConfirmCallback } = alertStore();
+
+   const handleAction = (message, callback) => {
+      setConfirmMessage(message);
+      setConfirmVisible(true);
+      setConfirmCallback(callback);
+   };
+
+   function handleAlert(message, error) {
+      alertStore.getState().setMessage(message);
+      alertStore.getState().setVisible(true);
+      alertStore.getState().setError(error);
+   }
    const handleDelete = (e) => {
       e.preventDefault();
 
-      if (status === "non-draggable") {
-         if (!window.confirm("Are you sure you want to permanently delete this task?")) {
-            return;
-         }
-         deleteTask(id, user.token).then((response) => {
-            if (response.ok) {
-               setFetchTrigger((prev) => !prev);
-            } else {
-               console.error("Falha ao eliminar a tarefa:", response.statusText);
-            }
+      if (type === "non-draggable") {
+         handleAction("Are you sure you want to permanently delete this task?", () => {
+            deleteTask(id, user.token).then((response) => {
+               if (response.ok) {
+                  setFetchTrigger((prev) => !prev);
+
+                  handleAlert("Task permanently deleted successfully :)", false);
+               } else {
+                  console.error("Falha ao eliminar a tarefa:", response.statusText);
+               }
+            });
          });
-      } else if (!window.confirm("Are you sure you want to delete this task?")) {
-         return;
+      } else {
+         handleAction("Are you sure you want to delete this task?", () => {
+            deleteListener(user.token, id).then((response) => {
+               if (response.ok) {
+                  setFetchTrigger((prev) => !prev);
+
+                  handleAlert("Task deleted successfully :)", false);
+               } else {
+                  console.error("Falha ao eliminar a tarefa:", response.statusText);
+               }
+            });
+         });
       }
-      deleteListener(user.token, id).then((response) => {
-         if (response.ok) {
-            setFetchTrigger((prev) => !prev);
-         } else {
-            console.error("Falha ao eliminar a tarefa:", response.statusText);
-         }
-      });
    };
 
    const handleNextButton = (e) => {
@@ -69,15 +87,18 @@ export default function Task({
    };
 
    const handleRestaure = (e) => {
-      if (confirm("Are you sure you want to restore this task?")) {
+      handleAction("Are you sure you want to restore this task?", () => {
          restaureTask(id, user.token).then((response) => {
             if (response.ok) {
                setFetchTrigger((prev) => !prev);
+               handleAlert("Task restored successfully :)", false);
             } else {
+               handleAlert("Something went wrong :(", true);
+
                console.error("Falha ao atualizar o status da tarefa:", response.statusText);
             }
          });
-      }
+      });
    };
    return (
       <>
@@ -94,7 +115,9 @@ export default function Task({
          >
             <h3>{title.substring(0, 10)}</h3>
             <div className="category_author">
-               <span style={{ marginRight: "30px" }}>{username_author.substring(0, 10)}</span>
+               <span style={{ marginRight: "30px" }}>
+                  {username_author === "deletedTasks" ? "Deleted user" : username_author.substring(0, 11)}
+               </span>
                <span>{category_type.substring(0, 8)}</span>
             </div>
          </div>
@@ -114,7 +137,9 @@ export default function Task({
                className="content_buttons"
                style={{
                   marginLeft:
-                     status === "TO DO"
+                     type === "non-draggable"
+                        ? "210px"
+                        : status === "TO DO"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "260px"
                            : "285px"
@@ -126,29 +151,27 @@ export default function Task({
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "260px"
                            : "285px"
-                        : status === "non-draggable"
-                        ? "200px"
                         : null,
                }}
             >
-               {status === "TO DO" || status == "non-draggable" ? null : (
+               {status === "TO DO" || type == "non-draggable" ? null : (
                   <button style={{ visibility: buttonVisibility }} children="<" onClick={handlePreviousButton}></button>
                )}
 
-               {status === "non-draggable" && user.role === "productOwner" && (
+               {type === "non-draggable" && user.role === "productOwner" && (
                   <button style={{ visibility: buttonVisibility }} onClick={handleRestaure}>
                      &#x21bb;
                   </button>
                )}
-               {((status != "non-draggable" &&
+               {((type != "non-draggable" &&
                   (username_author === username || user.role === "productOwner" || user.role === "scrumMaster")) ||
-                  (status === "non-draggable" && user.role === "productOwner")) && (
+                  (type === "non-draggable" && user.role === "productOwner")) && (
                   <button style={{ visibility: buttonVisibility }} onClick={handleDelete}>
                      <img src={trashIcon} alt="del" />
                   </button>
                )}
 
-               {status === "DONE" || status === "non-draggable" ? null : (
+               {status === "DONE" || type === "non-draggable" ? null : (
                   <button style={{ visibility: buttonVisibility }} children=">" onClick={handleNextButton}></button>
                )}
             </div>

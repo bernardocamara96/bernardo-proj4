@@ -5,6 +5,7 @@ import ModalContent from "./ModalContent";
 import { editTaskBE, deleteListener, deleteTask, restaureTask } from "../../utilities/services";
 import editPNG from "../../assets/edit.png";
 import { userStore, usernameStore } from "../../stores/userStore";
+import alertStore from "../../stores/alertStore";
 
 export default function ModalEditTask({ data, setModalVisibility, setFetchTrigger, modalType }) {
    const [categories, setCategories] = useState([]);
@@ -15,7 +16,7 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
    const [newTaskEndDate, setNewTaskEndDate] = useState(data.endDate);
    const [newCategory_type, setNewCategory_type] = useState(data.category_type);
    const [inputDisabled, setInputDisabled] = useState(true);
-
+   const { setConfirmMessage, setConfirmVisible, setConfirmCallback } = alertStore();
    const { token, role } = userStore.getState().user;
    const username = usernameStore.getState().username;
 
@@ -35,6 +36,17 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
             console.error("Error fetching data:", error);
          });
    }, []);
+
+   function handleAlert(message, error) {
+      alertStore.getState().setMessage(message);
+      alertStore.getState().setVisible(true);
+      alertStore.getState().setError(error);
+   }
+   const handleAction = (message, callback) => {
+      setConfirmMessage(message);
+      setConfirmVisible(true);
+      setConfirmCallback(callback);
+   };
    const handleSubmit = (e) => {
       e.preventDefault();
       if (modalType !== "deletedTask") {
@@ -49,52 +61,69 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
             newCategory_type
          ).then((response) => {
             if (response.ok) {
-               alert("Task updated successfully :)");
                setModalVisibility(false);
+
                setFetchTrigger((prev) => !prev);
+
+               handleAlert("Task edited successfully!", false);
+            } else if (response.status === 400) {
+               handleAlert("Error editing task :(", true);
+            } else if (response.status === 403) {
+               handleAlert("You don't have permission to edit this task :(", true);
             } else {
-               console.error("Falha ao carregar tarefas:", response.statusText);
+               handleAlert("Error editing task :(", true);
             }
          });
       } else if (modalType === "deletedTask") {
-         if (confirm("Are you sure you want to restore this task?")) {
+         handleAction("Are you sure you want to restore this task?", () => {
             restaureTask(data.id, token).then((response) => {
                if (response.ok) {
                   setModalVisibility(false);
+
                   setFetchTrigger((prev) => !prev);
+
+                  handleAlert("Task restored successfully!", false);
+               } else if (response.status === 403) {
+                  handleAlert("You don't have permission to restore this task :(", true);
                } else {
-                  console.error("Falha ao carregar tarefas:", response.statusText);
+                  handleAlert("Error restoring task :(", true);
                }
             });
-         }
+         });
       }
    };
 
    const handleDelete = (e) => {
       e.preventDefault();
       if (modalType !== "deletedTask") {
-         if (!window.confirm("Are you sure you want to delete this task?")) {
-            return;
-         }
-         deleteListener(token, data.id).then((response) => {
-            if (response.ok) {
-               setModalVisibility(false);
-               setFetchTrigger((prev) => !prev);
-            } else {
-               console.error("Falha ao eliminar a tarefa:", response.statusText);
-            }
+         handleAction("Are you sure you want to delete this task?", () => {
+            deleteListener(token, data.id).then((response) => {
+               if (response.ok) {
+                  setModalVisibility(false);
+                  setFetchTrigger((prev) => !prev);
+
+                  handleAlert("Task deleted successfully!", false);
+               } else {
+                  console.error("Falha ao eliminar a tarefa:", response.statusText);
+
+                  handleAlert("Error deleting task :(", true);
+               }
+            });
          });
       } else if (modalType === "deletedTask") {
-         if (!window.confirm("Are you sure you want to permanently delete this task?")) {
-            return;
-         }
-         deleteTask(data.id, token).then((response) => {
-            if (response.ok) {
-               setFetchTrigger((prev) => !prev);
-               setModalVisibility(false);
-            } else {
-               console.error("Falha ao eliminar a tarefa:", response.statusText);
-            }
+         handleAction("Are you sure you want to permanently delete this task?", () => {
+            deleteTask(data.id, token).then((response) => {
+               if (response.ok) {
+                  setFetchTrigger((prev) => !prev);
+                  setModalVisibility(false);
+
+                  handleAlert("Task permanently deleted successfully!", false);
+               } else {
+                  console.error("Falha ao eliminar a tarefa:", response.statusText);
+
+                  handleAlert("Error deleting task :(", true);
+               }
+            });
          });
       }
    };
@@ -112,8 +141,8 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
                         </button>
                      )}
                </div>
+
                <ModalContent
-                  data={data}
                   categories={categories}
                   taskTitle={newTaskTitle}
                   taskDescription={newTaskDescription}

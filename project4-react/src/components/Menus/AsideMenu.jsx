@@ -20,7 +20,7 @@ export default function AsideMenu({ type }) {
                   id="difSettings-tasks"
                   onClick={() => navigate("/tasks", { replace: true })}
                >
-                  <h4>Tasks</h4>
+                  <h4>Deleted Tasks</h4>
                </a>
                <a
                   className="menu-item set-pro"

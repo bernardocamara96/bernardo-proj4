@@ -14,6 +14,8 @@ export default function StandardList({ type }) {
    const [categoryList, setCategoryList] = useState([]);
    const [taskData, setTaskData] = useState({});
    const [modalEditVisibility, setModalEditVisibility] = useState(false);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [searchCategory, setSearchCategory] = useState("");
 
    useEffect(() => {
       if (type === "taskList") {
@@ -41,6 +43,7 @@ export default function StandardList({ type }) {
       setModalEditVisibility(true);
       setTaskData(taskData);
    };
+
    return (
       <div className="mainBoard-settings" id="mainBoard-settings">
          <div className="user-list">
@@ -51,10 +54,16 @@ export default function StandardList({ type }) {
                {type === "taskList" ? (
                   <>
                      <div id="title-deleted-tasks">
-                        <h3 id="user-list">Deleted Tasks</h3>
+                        <h3 id="user-list">List of Deleted Tasks</h3>
                      </div>
                      <div className="search-container" id="search-container-deleted">
-                        <input type="text" id="taskSearch" placeholder="🔍 Search tasks by title" />
+                        <input
+                           type="text"
+                           id="taskSearch"
+                           placeholder="🔍 Search tasks by title or description"
+                           value={searchTerm}
+                           onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                      </div>
                   </>
                ) : (
@@ -63,7 +72,13 @@ export default function StandardList({ type }) {
                         <h3 id="user-list">List of Categories</h3>
                      </div>
                      <div className="search-container" id="search-container-deleted">
-                        <input type="text" id="taskSearch" placeholder="🔍 Search categories by type" />
+                        <input
+                           type="text"
+                           id="taskSearch"
+                           placeholder="🔍 Search categories by type"
+                           value={searchCategory}
+                           onChange={(e) => setSearchCategory(e.target.value)}
+                        />
                         <AddCategory setCategoryList={setCategoryList} />
                      </div>
                   </>
@@ -83,8 +98,10 @@ export default function StandardList({ type }) {
                                  endDate={task.endDate}
                                  category_type={task.category_type}
                                  username_author={task.username_author}
+                                 status={task.status === 100 ? "TO DO" : task.status === 200 ? "DOING" : "DONE"}
                                  setFetchTrigger={setFetchTrigger}
                                  onDoubleClick={handleTaskDoubleClick}
+                                 searchTerm={searchTerm}
                               />
                            );
                         })}
@@ -96,6 +113,7 @@ export default function StandardList({ type }) {
                                  key={category.id}
                                  category_type={category.type}
                                  setFetchTrigger={setFetchTrigger}
+                                 searchTerm={searchCategory}
                               />
                            );
                         })}
