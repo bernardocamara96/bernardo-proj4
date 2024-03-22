@@ -10,6 +10,7 @@ export default function OwnUserEdit() {
    const user = userStore.getState().user;
    const [username, setUsername] = useState("");
    const [photo, setPhoto] = useState("");
+   const updateRole = userStore((state) => state.updateRole);
 
    useEffect(() => {
       if (user.token) {
@@ -24,6 +25,7 @@ export default function OwnUserEdit() {
             .then(function (data) {
                setPhoto(data.photoUrl);
                setUsername(data.name);
+               updateRole(data.role);
             })
             .catch((error) => {
                console.error("Error fetching data:", error);

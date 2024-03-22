@@ -92,34 +92,35 @@ export default function ListUsers() {
    }
    function handleSubmit(e) {
       e.preventDefault();
-
-      if (changeTrigger) {
-         editOtherUser(
-            token,
-            usernameClicked,
-            role,
-            firstName,
-            lastName,
-            email,
-            newEmail,
-            phone,
-            photo,
-            isDeleted
-         ).then((response) => {
-            if (response.ok) {
-               setChangeTrigger(false);
-               handleAlert("User edited :)", false);
-               if (statusChange) {
-                  setStatusChangeTrigger(!statusChangeTrigger);
-                  setStatusChange(false);
+      handleAction("Are you sure you want to edit this user", () => {
+         if (changeTrigger) {
+            editOtherUser(
+               token,
+               usernameClicked,
+               role,
+               firstName,
+               lastName,
+               email,
+               newEmail,
+               phone,
+               photo,
+               isDeleted
+            ).then((response) => {
+               if (response.ok) {
+                  setChangeTrigger(false);
+                  handleAlert("User edited :)", false);
+                  if (statusChange) {
+                     setStatusChangeTrigger(!statusChangeTrigger);
+                     setStatusChange(false);
+                  }
+               } else {
+                  handleAlert("Error editing user :(", true);
                }
-            } else {
-               handleAlert("Error editing user :(", true);
-            }
-         });
-      } else {
-         handleAlert("No changes were made", true);
-      }
+            });
+         } else {
+            handleAlert("No changes were made", true);
+         }
+      });
    }
 
    function handleDelete() {
@@ -202,7 +203,7 @@ export default function ListUsers() {
                   >
                      <div
                         id="individual-user-info"
-                        style={{ textAlign: "center", display: displayBackground, visibility: visibility }}
+                        style={{ textAlign: "left", display: displayBackground, visibility: visibility }}
                      >
                         <div className="content" id="content">
                            <div id="userImageContainer" style={{ textAlign: "center" }}>

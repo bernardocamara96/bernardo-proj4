@@ -12,6 +12,7 @@ export default function UsersList() {
    const [photo, setPhoto] = useState("");
    const [username, setUsername] = useState("");
    const user = userStore.getState().user;
+   const updateRole = userStore((state) => state.updateRole);
 
    useEffect(() => {
       if (user.token) {
@@ -26,6 +27,7 @@ export default function UsersList() {
             .then(function (data) {
                setPhoto(data.photoUrl);
                setUsername(data.name);
+               updateRole(data.role);
             })
             .catch((error) => {
                console.error("Error fetching data:", error);

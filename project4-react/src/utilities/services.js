@@ -4,7 +4,7 @@ const baseURL = "http://localhost:8080/bernardo-proj4/rest/";
 
 async function registerUser(user) {
    try {
-      const response = await fetch(`${baseURL}user/add`, {
+      const response = await fetch(`${baseURL}users/`, {
          method: "POST",
          headers: {
             Accept: "application/json",
@@ -32,7 +32,7 @@ async function loginAttempt(username, password) {
       password: encryptation.encryptPassword(password),
    };
 
-   return await fetch(`${baseURL}user/login`, {
+   return await fetch(`${baseURL}users/login`, {
       method: "POST",
       headers: {
          Accept: "application/json",
@@ -43,7 +43,7 @@ async function loginAttempt(username, password) {
 }
 
 async function fetchPhotoNameAndRedirect(token) {
-   return await fetch(`${baseURL}user/getphotoandname`, {
+   return await fetch(`${baseURL}users/photoandname`, {
       method: "GET",
       headers: {
          Accept: "application/json",
@@ -54,7 +54,7 @@ async function fetchPhotoNameAndRedirect(token) {
 }
 
 async function getAllCategories(token) {
-   return await fetch(`${baseURL}category/all`, {
+   return await fetch(`${baseURL}categories/`, {
       method: "GET",
       headers: {
          Accept: "application/json",
@@ -80,7 +80,7 @@ async function addTaskBE(token, title, description, priority, startDate, endDate
       task.endDate = endDate;
    }
 
-   return await fetch(`${baseURL}task/create/${category_type}`, {
+   return await fetch(`${baseURL}tasks/${category_type}`, {
       method: "POST",
       headers: {
          Accept: "application/json",
@@ -93,7 +93,7 @@ async function addTaskBE(token, title, description, priority, startDate, endDate
 
 async function loadTasks(token) {
    try {
-      return await fetch(`${baseURL}task/allnotdeleted`, {
+      return await fetch(`${baseURL}tasks/allnotdeleted`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -121,7 +121,7 @@ async function editTaskBE(token, id, title, description, priority, startDate, en
    else taskUpdates.removeEndDate = true;
 
    try {
-      return await fetch(`${baseURL}task/edit/${id}`, {
+      return await fetch(`${baseURL}tasks/edit/${id}`, {
          method: "PUT", // Usando PATCH para edição parcial
          headers: {
             Accept: "application/json",
@@ -138,7 +138,7 @@ async function editTaskBE(token, id, title, description, priority, startDate, en
 
 async function deleteListener(token, taskId) {
    try {
-      return await fetch(`${baseURL}task/deletetemp/${taskId}`, {
+      return await fetch(`${baseURL}tasks/deletetemp/${taskId}`, {
          method: "PATCH",
          headers: {
             // Assume que a autenticação é feita via cabeçalhos 'username' e 'password'
@@ -157,7 +157,7 @@ async function deleteListener(token, taskId) {
 async function updateTaskStatus(token, taskId, newStatus) {
    const taskUpdate = { status: newStatus };
    try {
-      return await fetch(`${baseURL}task/status/${taskId}/${newStatus}`, {
+      return await fetch(`${baseURL}tasks/status/${taskId}/${newStatus}`, {
          method: "PATCH",
          headers: {
             Accept: "application/json",
@@ -173,7 +173,7 @@ async function updateTaskStatus(token, taskId, newStatus) {
 
 async function createUsernameFilter(username, token) {
    try {
-      return await fetch(`${baseURL}task/tasksnumber/${username}`, {
+      return await fetch(`${baseURL}tasks/number/${username}`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -188,7 +188,7 @@ async function createUsernameFilter(username, token) {
 
 async function tasksByCategory(categoryType, token) {
    try {
-      return await fetch(`${baseURL}category/tasksnumber/${categoryType}`, {
+      return await fetch(`${baseURL}categories/tasksnumber/${categoryType}`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -203,7 +203,7 @@ async function tasksByCategory(categoryType, token) {
 
 async function loadCategories(token) {
    try {
-      return await fetch(`${baseURL}category/all`, {
+      return await fetch(`${baseURL}categories/`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -218,7 +218,7 @@ async function loadCategories(token) {
 
 async function loadUsers(token) {
    try {
-      return await fetch(`${baseURL}user/all`, {
+      return await fetch(`${baseURL}users/`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -233,7 +233,7 @@ async function loadUsers(token) {
 
 async function loadTasksByUser(token, filteredUsername) {
    try {
-      return await fetch(`${baseURL}task/allbyuser?username=${filteredUsername}`, {
+      return await fetch(`${baseURL}tasks/byuser?username=${filteredUsername}`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -247,7 +247,7 @@ async function loadTasksByUser(token, filteredUsername) {
 }
 async function loadTasksByCategory(token, category_type) {
    try {
-      return await fetch(`${baseURL}task/allbycategory?category=${category_type}`, {
+      return await fetch(`${baseURL}tasks/bycategory?category=${category_type}`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -261,7 +261,7 @@ async function loadTasksByCategory(token, category_type) {
 }
 async function loadTasksByUserAndCategory(token, filteredUsername, category_type) {
    try {
-      return await fetch(`${baseURL}task/allbyuserandcategory?username=${filteredUsername}&category=${category_type}`, {
+      return await fetch(`${baseURL}tasks/byuserandcategory?username=${filteredUsername}&category=${category_type}`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -276,7 +276,7 @@ async function loadTasksByUserAndCategory(token, filteredUsername, category_type
 
 async function loadDeletedTasks(token) {
    try {
-      return await fetch(`${baseURL}task/alldeleted`, {
+      return await fetch(`${baseURL}tasks/alldeleted`, {
          method: "GET",
          headers: {
             Accept: "application/json",
@@ -290,7 +290,7 @@ async function loadDeletedTasks(token) {
 }
 
 async function deleteTask(taskId, token) {
-   return await fetch(`${baseURL}task/delete/${taskId}`, {
+   return await fetch(`${baseURL}tasks/${taskId}`, {
       method: "DELETE",
       headers: {
          Accept: "application/json",
@@ -301,7 +301,7 @@ async function deleteTask(taskId, token) {
 }
 
 async function addCategory(type, token) {
-   return await fetch(`${baseURL}category/add/${type}`, {
+   return await fetch(`${baseURL}categories/${type}`, {
       method: "POST",
       headers: {
          Accept: "application/json",
@@ -312,7 +312,7 @@ async function addCategory(type, token) {
 }
 
 async function deleteCategory(categoryType, token) {
-   return await fetch(`${baseURL}category/delete/${categoryType}`, {
+   return await fetch(`${baseURL}categories/${categoryType}`, {
       method: "DELETE",
       headers: {
          Accept: "application/json",
@@ -323,7 +323,7 @@ async function deleteCategory(categoryType, token) {
 }
 
 async function editCategory(categoryType, newCategoryType, token) {
-   return await fetch(`${baseURL}category/edit/${categoryType}/${newCategoryType}`, {
+   return await fetch(`${baseURL}categories/${categoryType}/${newCategoryType}`, {
       method: "PATCH",
       headers: {
          Accept: "application/json",
@@ -334,7 +334,7 @@ async function editCategory(categoryType, newCategoryType, token) {
 }
 
 async function restaureTask(taskId, token) {
-   return await fetch(`${baseURL}task/recycle/${taskId}`, {
+   return await fetch(`${baseURL}tasks/recycle/${taskId}`, {
       method: "PATCH",
       headers: {
          Accept: "application/json",
@@ -345,7 +345,7 @@ async function restaureTask(taskId, token) {
 }
 
 async function fetchUserDataByUsername(username, token) {
-   return await fetch(`${baseURL}user/userinfo/${username}`, {
+   return await fetch(`${baseURL}users/info/${username}`, {
       method: "GET",
       headers: {
          Accept: "application/json",
@@ -367,7 +367,7 @@ async function editOtherUser(token, username, role, firstName, lastName, oldEmai
 
    if (email != oldEmail) user.email = email;
 
-   return await fetch(`${baseURL}user/editotheruser`, {
+   return await fetch(`${baseURL}users/otheruser`, {
       method: "PATCH",
       headers: {
          Accept: "application/json",
@@ -381,7 +381,7 @@ async function editOtherUser(token, username, role, firstName, lastName, oldEmai
 
 async function deletePermanentlyUser(token, userToDeleteUsername) {
    try {
-      return await fetch(`${baseURL}user/permanetelydelete`, {
+      return await fetch(`${baseURL}users/`, {
          method: "DELETE",
          headers: {
             Accept: "application/json",
@@ -397,7 +397,7 @@ async function deletePermanentlyUser(token, userToDeleteUsername) {
 
 async function deleteTasksByUser(token, userToDeleteUsername) {
    try {
-      return await fetch(`${baseURL}task/deletetemp/all/${userToDeleteUsername}`, {
+      return await fetch(`${baseURL}tasks/temp/all/${userToDeleteUsername}`, {
          method: "DELETE",
          headers: {
             Accept: "application/json",
@@ -411,7 +411,7 @@ async function deleteTasksByUser(token, userToDeleteUsername) {
 }
 
 async function fetchUserData(token) {
-   return await fetch(`${baseURL}user/userinfo`, {
+   return await fetch(`${baseURL}users/info`, {
       method: "GET",
       headers: {
          Accept: "application/json",
@@ -422,7 +422,7 @@ async function fetchUserData(token) {
 }
 
 async function editUserData(user, token) {
-   return await fetch(`${baseURL}user/edituserdata`, {
+   return await fetch(`${baseURL}users/data`, {
       method: "PATCH",
       headers: {
          Accept: "application/json",
@@ -438,7 +438,7 @@ async function editPassword(oldPassword, newPassword, token) {
       password: encryptation.encryptPassword(oldPassword),
       newPassword: encryptation.encryptPassword(newPassword),
    };
-   return await fetch(`${baseURL}user/edituserpassword`, {
+   return await fetch(`${baseURL}users/password`, {
       method: "POST",
       headers: {
          Accept: "application/json",

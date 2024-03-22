@@ -36,7 +36,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
                   const response = await createUsernameFilter(checkUser.username, user.token);
                   if (response.ok) {
                      const responseData = await response.json();
-                     if (responseData > 0) {
+                     if (responseData > 0 && checkUser.username !== "deletedTasks") {
                         validUsers.push(checkUser.username);
                      }
                   }

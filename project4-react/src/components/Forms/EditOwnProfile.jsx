@@ -197,7 +197,7 @@ export default function EditOwnProfile() {
                      Old Password
                   </label>
                   <input
-                     type="text"
+                     type="password"
                      name="oldPassword"
                      id="oldPassword-field"
                      maxLength="35"
@@ -209,7 +209,7 @@ export default function EditOwnProfile() {
                      New Password
                   </label>
                   <input
-                     type="text"
+                     type="password"
                      name="newPass"
                      id="newPass-field"
                      maxLength="35"
@@ -221,7 +221,7 @@ export default function EditOwnProfile() {
                      Repeat Password
                   </label>
                   <input
-                     type="text"
+                     type="password"
                      name="repeatPass"
                      id="repeatPass-field"
                      maxLength="35"

@@ -113,7 +113,7 @@ export default function Task({
                      : status === "DONE" && "rgb(0,128,0,0.65)",
             }}
          >
-            <h3>{title.substring(0, 10)}</h3>
+            <h3 id="title-task-banner">{title.substring(0, 10)}</h3>
             <div className="category_author">
                <span style={{ marginRight: "30px" }}>
                   {username_author === "deletedTasks" ? "Deleted user" : username_author.substring(0, 11)}
@@ -141,15 +141,15 @@ export default function Task({
                         ? "210px"
                         : status === "TO DO"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "260px"
+                           ? "250px"
                            : "285px"
                         : status === "DOING"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "235px"
-                           : "260px"
+                           ? "225px"
+                           : "250px"
                         : status === "DONE"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "260px"
+                           ? "250px"
                            : "285px"
                         : null,
                }}

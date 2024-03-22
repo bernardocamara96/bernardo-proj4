@@ -53,15 +53,16 @@ export default function Scrum() {
          <main id="scrumMain">
             {user.role === "developer" ? null : <AsideMenu type={user.role} />}
             <div id="scrum-content">
-               {user.role === "developer" ? null : (
-                  <div className="search-container-homepage" id="search-container-homepage">
-                     <input
-                        type="text"
-                        id="taskSearchHomepage"
-                        placeholder="🔍 Search tasks by title or description"
-                        value={searchTermHome}
-                        onChange={(e) => setSearchTermHome(e.target.value)}
-                     />
+               <div className="search-container-homepage" id="search-container-homepage">
+                  <input
+                     type="text"
+                     id="taskSearchHomepage"
+                     placeholder="🔍 Search tasks by title or description"
+                     value={searchTermHome}
+                     onChange={(e) => setSearchTermHome(e.target.value)}
+                     style={{ marginLeft: user.role === "developer" && "390px" }}
+                  />
+                  {user.role === "developer" ? null : (
                      <Filters
                         id="filters-scrum"
                         tasks={{ TODOtasks, DOINGtasks, DONEtasks }}
@@ -69,8 +70,8 @@ export default function Scrum() {
                         fetchTrigger={fetchTrigger}
                         setFetchTrigger={setFetchTrigger}
                      />
-                  </div>
-               )}
+                  )}
+               </div>
                <ColumnsContainer
                   token={user.token}
                   tasks={{ TODOtasks, DOINGtasks, DONEtasks }}
