@@ -150,7 +150,7 @@ export default function Task({
                         : status === "TO DO"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "255px"
-                           : "290px"
+                           : "280px"
                         : status === "DOING"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "230px"
@@ -158,7 +158,7 @@ export default function Task({
                         : status === "DONE"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
                            ? "255px"
-                           : "290px"
+                           : "280px"
                         : null,
                }}
             >
