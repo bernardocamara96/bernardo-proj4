@@ -3,20 +3,27 @@ import appLogo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { userStore } from "../../stores/userStore";
 import filterStore from "../../stores/filterStore";
+import alertStore from "../../stores/alertStore";
 
 export default function HeaderScrum({ username, userPhoto }) {
    const navigate = useNavigate();
    const { updateUsernameFilter, updateCategoryFilter } = filterStore.getState();
+   const { setConfirmMessage, setConfirmVisible, setConfirmCallback } = alertStore();
+
+   const handleAction = (message, callback) => {
+      setConfirmMessage(message);
+      setConfirmVisible(true);
+      setConfirmCallback(callback);
+   };
 
    const user = userStore.getState().user;
    function clickOnExit() {
-      if (!window.confirm("Are you sure you want exit the app?")) {
-         return;
-      }
-      updateUsernameFilter("default");
-      updateCategoryFilter("default");
-      navigate("/", { replace: true });
-      sessionStorage.removeItem("user-storage");
+      handleAction("Are you sure you want exit the app?", () => {
+         updateUsernameFilter("default");
+         updateCategoryFilter("default");
+         navigate("/", { replace: true });
+         sessionStorage.removeItem("user-storage");
+      });
    }
    return (
       <header>

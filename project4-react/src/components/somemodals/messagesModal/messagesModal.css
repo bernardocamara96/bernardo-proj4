@@ -10,6 +10,7 @@
    display: flex;
    justify-content: center;
    align-items: center;
+   font-weight: bold;
 }
 
 .messagesModal.error {
@@ -43,6 +44,7 @@
    border-radius: 5px;
    background-color: rgb(142, 142, 142);
    width: 50%;
+   font-weight: bold;
 }
 
 .confirmButton:hover {
@@ -69,4 +71,8 @@
    transform: translate(-50%, -50%);
    background-color: #1b1b1bae;
    z-index: 98;
+}
+
+#confirmModal {
+   max-width: 360px;
 }
