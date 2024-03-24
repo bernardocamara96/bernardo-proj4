@@ -2,6 +2,7 @@ import * as encryptation from "./encryptation.js";
 
 const baseURL = "http://localhost:8080/bernardo-proj4/rest/";
 
+//function to register a user
 async function registerUser(user) {
    try {
       const response = await fetch(`${baseURL}users/`, {
@@ -26,6 +27,7 @@ async function registerUser(user) {
    }
 }
 
+//function to login a user
 async function loginAttempt(username, password) {
    let userLogin = {
       username: username,
@@ -42,6 +44,7 @@ async function loginAttempt(username, password) {
    });
 }
 
+//function to fetch the photo and name of the user
 async function fetchPhotoNameAndRedirect(token) {
    return await fetch(`${baseURL}users/photoandname`, {
       method: "GET",
@@ -53,6 +56,7 @@ async function fetchPhotoNameAndRedirect(token) {
    });
 }
 
+//function to get all categories
 async function getAllCategories(token) {
    return await fetch(`${baseURL}categories/`, {
       method: "GET",
@@ -64,6 +68,7 @@ async function getAllCategories(token) {
    });
 }
 
+//function to add a task
 async function addTaskBE(token, title, description, priority, startDate, endDate, category_type) {
    const TODO_COLUMN = 100;
    let task = {
@@ -91,6 +96,7 @@ async function addTaskBE(token, title, description, priority, startDate, endDate
    });
 }
 
+//function to load tasks
 async function loadTasks(token) {
    try {
       return await fetch(`${baseURL}tasks/allnotdeleted`, {
@@ -106,6 +112,7 @@ async function loadTasks(token) {
    }
 }
 
+//function to edit a task
 async function editTaskBE(token, id, title, description, priority, startDate, endDate, category_type) {
    let taskUpdates = {
       title: title,
@@ -136,6 +143,7 @@ async function editTaskBE(token, id, title, description, priority, startDate, en
    }
 }
 
+//function to delete a task
 async function deleteListener(token, taskId) {
    try {
       return await fetch(`${baseURL}tasks/deletetemp/${taskId}`, {
@@ -154,6 +162,7 @@ async function deleteListener(token, taskId) {
    }
 }
 
+//function to update the status of a task
 async function updateTaskStatus(token, taskId, newStatus) {
    const taskUpdate = { status: newStatus };
    try {
@@ -171,6 +180,7 @@ async function updateTaskStatus(token, taskId, newStatus) {
    }
 }
 
+//function go get the number of tasks created by a specific user
 async function createUsernameFilter(username, token) {
    try {
       return await fetch(`${baseURL}tasks/number/${username}`, {
@@ -186,6 +196,7 @@ async function createUsernameFilter(username, token) {
    }
 }
 
+//function to get the number of tasks by category
 async function tasksByCategory(categoryType, token) {
    try {
       return await fetch(`${baseURL}categories/tasksnumber/${categoryType}`, {
@@ -201,6 +212,7 @@ async function tasksByCategory(categoryType, token) {
    }
 }
 
+//function to load categories
 async function loadCategories(token) {
    try {
       return await fetch(`${baseURL}categories/`, {
@@ -216,6 +228,7 @@ async function loadCategories(token) {
    }
 }
 
+//function to load users
 async function loadUsers(token) {
    try {
       return await fetch(`${baseURL}users/`, {
@@ -231,6 +244,8 @@ async function loadUsers(token) {
    }
 }
 
+//function to load tasks by user
+
 async function loadTasksByUser(token, filteredUsername) {
    try {
       return await fetch(`${baseURL}tasks/byuser?username=${filteredUsername}`, {
@@ -245,6 +260,8 @@ async function loadTasksByUser(token, filteredUsername) {
       console.error("Erro na rede ao tentar carregar tarefas:", error);
    }
 }
+
+//function to load tasks by category
 async function loadTasksByCategory(token, category_type) {
    try {
       return await fetch(`${baseURL}tasks/bycategory?category=${category_type}`, {
@@ -259,6 +276,8 @@ async function loadTasksByCategory(token, category_type) {
       console.error("Erro na rede ao tentar carregar tarefas:", error);
    }
 }
+
+//function to load tasks by user and category
 async function loadTasksByUserAndCategory(token, filteredUsername, category_type) {
    try {
       return await fetch(`${baseURL}tasks/byuserandcategory?username=${filteredUsername}&category=${category_type}`, {
@@ -274,6 +293,7 @@ async function loadTasksByUserAndCategory(token, filteredUsername, category_type
    }
 }
 
+//function to load deleted tasks
 async function loadDeletedTasks(token) {
    try {
       return await fetch(`${baseURL}tasks/alldeleted`, {
@@ -289,6 +309,7 @@ async function loadDeletedTasks(token) {
    }
 }
 
+//function to delete a task
 async function deleteTask(taskId, token) {
    return await fetch(`${baseURL}tasks/${taskId}`, {
       method: "DELETE",
@@ -300,6 +321,7 @@ async function deleteTask(taskId, token) {
    });
 }
 
+//function to create a category
 async function addCategory(type, token) {
    return await fetch(`${baseURL}categories/${type}`, {
       method: "POST",
@@ -311,6 +333,7 @@ async function addCategory(type, token) {
    });
 }
 
+//function to delete a category
 async function deleteCategory(categoryType, token) {
    return await fetch(`${baseURL}categories/${categoryType}`, {
       method: "DELETE",
@@ -322,6 +345,7 @@ async function deleteCategory(categoryType, token) {
    });
 }
 
+//function to edit a category
 async function editCategory(categoryType, newCategoryType, token) {
    return await fetch(`${baseURL}categories/${categoryType}/${newCategoryType}`, {
       method: "PATCH",
@@ -333,6 +357,7 @@ async function editCategory(categoryType, newCategoryType, token) {
    });
 }
 
+//function to restore a task
 async function restaureTask(taskId, token) {
    return await fetch(`${baseURL}tasks/recycle/${taskId}`, {
       method: "PATCH",
@@ -344,6 +369,7 @@ async function restaureTask(taskId, token) {
    });
 }
 
+//function to fetch user data by username
 async function fetchUserDataByUsername(username, token) {
    return await fetch(`${baseURL}users/info/${username}`, {
       method: "GET",
@@ -355,6 +381,7 @@ async function fetchUserDataByUsername(username, token) {
    });
 }
 
+//function to edit other user
 async function editOtherUser(token, username, role, firstName, lastName, oldEmail, email, phone, photoURL, isDeleted) {
    let user = {
       role: role,
@@ -379,6 +406,7 @@ async function editOtherUser(token, username, role, firstName, lastName, oldEmai
    });
 }
 
+//function to delete a user permanently
 async function deletePermanentlyUser(token, userToDeleteUsername) {
    try {
       return await fetch(`${baseURL}users/`, {
@@ -395,6 +423,7 @@ async function deletePermanentlyUser(token, userToDeleteUsername) {
    }
 }
 
+//function to delete tasks by created by a specific user
 async function deleteTasksByUser(token, userToDeleteUsername) {
    try {
       return await fetch(`${baseURL}tasks/temp/all/${userToDeleteUsername}`, {
@@ -410,6 +439,8 @@ async function deleteTasksByUser(token, userToDeleteUsername) {
    }
 }
 
+//function to fetch user data
+
 async function fetchUserData(token) {
    return await fetch(`${baseURL}users/info`, {
       method: "GET",
@@ -420,6 +451,8 @@ async function fetchUserData(token) {
       },
    });
 }
+
+//function to edit user
 
 async function editUserData(user, token) {
    return await fetch(`${baseURL}users/data`, {
@@ -433,6 +466,7 @@ async function editUserData(user, token) {
    });
 }
 
+//function to edit the password of a user
 async function editPassword(oldPassword, newPassword, token) {
    let userNewPassword = {
       password: encryptation.encryptPassword(oldPassword),

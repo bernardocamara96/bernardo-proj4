@@ -8,11 +8,14 @@ export default function AddCategory({ setCategoryList }) {
    const [category, setCategory] = useState("");
    const user = userStore.getState().user;
 
+   //function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
+
+   //function to handle the click of the add category button
    function handleClick() {
       if (category !== "" || category !== null) {
          addCategory(category, user.token).then((response) => {
@@ -37,8 +40,15 @@ export default function AddCategory({ setCategoryList }) {
       <>
          {user.role === "productOwner" && (
             <div id="addCategory-id">
-               <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} />
-               <button onClick={handleClick}>Add Category</button>
+               <input
+                  type="text"
+                  data-testid="category-input"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+               />
+               <button data-testid="add-category-button" onClick={handleClick}>
+                  Add Category
+               </button>
             </div>
          )}
       </>

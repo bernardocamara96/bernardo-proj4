@@ -11,6 +11,7 @@ export default function Column({ title, token, tasks, setFetchTrigger, tasksNumb
    const [modalEditVisibility, setModalEditVisibility] = useState(false);
    const [taskData, setTaskData] = useState({});
 
+   //function to handle the double click on a task, it will create the modal to edit the task
    const handleTaskDoubleClick = (taskData) => {
       setModalEditVisibility(true);
       setTaskData(taskData);

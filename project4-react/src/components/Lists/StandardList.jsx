@@ -17,6 +17,7 @@ export default function StandardList({ type }) {
    const [searchTerm, setSearchTerm] = useState("");
    const [searchCategory, setSearchCategory] = useState("");
 
+   //fetch the deleted tasks or categories, depending on the page
    useEffect(() => {
       if (type === "taskList") {
          loadDeletedTasks(user.token).then((response) => {
@@ -39,6 +40,7 @@ export default function StandardList({ type }) {
       }
    }, [fetchTrigger]);
 
+   //function to handle the double click on a task, it will create the modal to edit the task
    const handleTaskDoubleClick = (taskData) => {
       setModalEditVisibility(true);
       setTaskData(taskData);
@@ -75,7 +77,7 @@ export default function StandardList({ type }) {
                         <input
                            type="text"
                            id="taskSearch"
-                           placeholder="🔍 Search categories by type"
+                           placeholder="🔍 Search categories"
                            value={searchCategory}
                            onChange={(e) => setSearchCategory(e.target.value)}
                         />

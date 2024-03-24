@@ -22,17 +22,21 @@ export default function Task({
 
    const { setConfirmMessage, setConfirmVisible, setConfirmCallback } = alertStore();
 
+   //function to set the confirm messages
    const handleAction = (message, callback) => {
       setConfirmMessage(message);
       setConfirmVisible(true);
       setConfirmCallback(callback);
    };
 
+   //function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
+
+   //function to handle the delete of the task
    const handleDelete = (e) => {
       e.preventDefault();
 
@@ -63,6 +67,7 @@ export default function Task({
       }
    };
 
+   //function to handle the next button inside the task
    const handleNextButton = (e) => {
       var newStatus = status === "TO DO" ? 200 : status === "DOING" ? 300 : null;
 
@@ -74,6 +79,8 @@ export default function Task({
          }
       });
    };
+
+   //function to handle the previous button inside the task
    const handlePreviousButton = (e) => {
       var newStatus = status === "DONE" ? 200 : status === "DOING" ? 100 : null;
 
@@ -86,6 +93,7 @@ export default function Task({
       });
    };
 
+   //function to handle the restore of the task
    const handleRestaure = (e) => {
       handleAction("Are you sure you want to restore this task?", () => {
          restaureTask(id, user.token).then((response) => {
@@ -113,7 +121,7 @@ export default function Task({
                      : status === "DONE" && "rgb(0,128,0,0.65)",
             }}
          >
-            <h3 id="title-task-banner">{title.substring(0, 10)}</h3>
+            <h3 id="title-task-banner">{title.length > 10 ? title.substring(0, 10) + "..." : title}</h3>
             <div className="category_author">
                <span style={{ marginRight: "30px" }}>
                   {username_author === "deletedTasks" ? "Deleted user" : username_author.substring(0, 11)}
@@ -141,16 +149,16 @@ export default function Task({
                         ? "210px"
                         : status === "TO DO"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "250px"
-                           : "285px"
+                           ? "255px"
+                           : "290px"
                         : status === "DOING"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "225px"
-                           : "250px"
+                           ? "230px"
+                           : "255px"
                         : status === "DONE"
                         ? username_author === username || user.role === "productOwner" || user.role === "scrumMaster"
-                           ? "250px"
-                           : "285px"
+                           ? "255px"
+                           : "290px"
                         : null,
                }}
             >

@@ -19,6 +19,7 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
 
    const user = userStore.getState().user;
 
+   // Function to handle the drag and drop of the tasks
    const handleDragEnd = (result) => {
       const { source, destination, draggableId } = result;
 
@@ -104,6 +105,8 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
       }
    };
 
+   // Load the tasks when fetchtrigger changes
+
    useEffect(() => {
       if (token) {
          if (usernameFilter === "default" && categoryFilter === "default") {
@@ -165,6 +168,7 @@ export default function ColumnsContainer({ token, tasks, setTasks, fetchTrigger,
       }
    }, [fetchTrigger]);
 
+   //auxiliar function to filter the tasks
    function auxiliarFilterFunction(tasks) {
       const componentsByStatus = {
          TODO: tasks.filter((task) => task.status === 100),

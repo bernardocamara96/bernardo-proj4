@@ -18,45 +18,81 @@ export default function RegisterForm({ type }) {
    const [photo, setPhoto] = useState("");
    const navigate = useNavigate();
 
+   // Function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
 
+   function isValidURL(url) {
+      try {
+         new URL(url);
+         return true;
+      } catch (error) {
+         return false;
+      }
+   }
+
+   // Function to handle the submit of the register form
    async function handleSubmit(e) {
       e.preventDefault();
-      if (password === password2) {
-         let user = {
-            firstName: firstname,
-            lastName: lastname,
-            password: encryptation.encryptPassword(password),
-            phoneNumber: phone,
-            photoURL: photo,
-            email: email,
-            username: username,
-            role: role,
-         };
+      if (username.length >= 2 && username.length <= 25) {
+         if (password.length >= 4) {
+            if (phone.length >= 7 && phone.length <= 20) {
+               if (password === password2) {
+                  if (isValidURL(photo)) {
+                     if (
+                        firstname.length >= 1 &&
+                        firstname.length <= 25 &&
+                        lastname.length >= 1 &&
+                        lastname.length <= 25
+                     ) {
+                        let user = {
+                           firstName: firstname,
+                           lastName: lastname,
+                           password: encryptation.encryptPassword(password),
+                           phoneNumber: phone,
+                           photoURL: photo,
+                           email: email,
+                           username: username,
+                           role: role,
+                        };
 
-         registerUser(user)
-            .then((response) => {
-               if (response.ok) {
-                  handleAlert("user created successfully :)", false);
+                        registerUser(user)
+                           .then((response) => {
+                              if (response.ok) {
+                                 handleAlert("user created successfully :)", false);
 
-                  if (type === "productOwnerRegister") {
-                     navigate("/users", { replace: true });
-                  } else navigate("/", { replace: true });
-               }
-            })
-            .catch((status) => {
-               if (status == 409) {
-                  handleAlert("username or email already exists :)", true);
+                                 if (type === "productOwnerRegister") {
+                                    navigate("/users", { replace: true });
+                                 } else navigate("/", { replace: true });
+                              }
+                           })
+                           .catch((status) => {
+                              if (status == 409) {
+                                 handleAlert("username or email already exists :)", true);
+                              } else {
+                                 handleAlert("something went wrong :(", true);
+                              }
+                           });
+                     } else {
+                        handleAlert("First Name and Last Name must have between 1 and 25 characters :(", true);
+                     }
+                  } else {
+                     handleAlert("Invalid photo url :(", true);
+                  }
                } else {
-                  handleAlert("something went wrong :(", true);
+                  handleAlert("Passwords do not match :(", true);
                }
-            });
+            } else {
+               handleAlert("Phone must have between 7 and 20 characters :(", true);
+            }
+         } else {
+            handleAlert("Password must have at least 4 characters :(", true);
+         }
       } else {
-         handleAlert("Passwords do not match :(", true);
+         handleAlert("Username must have between 2 and 25 characters :(", true);
       }
    }
 

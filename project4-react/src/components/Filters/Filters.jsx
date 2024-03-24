@@ -21,10 +21,10 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
    const [seletectedUsername, setSelectedUsername] = useState(usernameFilter);
    const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
 
-   const { TODOtasks, DOINGtasks, DONEtasks } = tasks;
    const { setTODOtasks, setDOINGtasks, setDONEtasks } = setTasks;
    console.log(setTODOtasks);
 
+   //fetch the users and categories to filter
    useEffect(() => {
       const fetchUsernames = async () => {
          try {
@@ -74,6 +74,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
       fetchCategories();
    }, [fetchTrigger]);
 
+   //clean the filters
    function cleanFilters() {
       updateUsernameFilter("default");
       updateCategoryFilter("default");
@@ -82,6 +83,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
       setFetchTrigger((prev) => !prev);
    }
 
+   //filter the tasks by user and categories
    function handleClick() {
       if (seletectedUsername === "default" && selectedCategory === "default") {
          loadTasks(user.token).then((response) => {
@@ -141,6 +143,7 @@ export default function Filters({ tasks, setTasks, fetchTrigger, setFetchTrigger
       }
    }
 
+   //auxiliar function to filter the tasks
    function auxiliarFilterFunction(tasks) {
       const componentsByStatus = {
          TODO: tasks.filter((task) => task.status === 100),

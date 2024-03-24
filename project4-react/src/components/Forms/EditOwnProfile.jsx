@@ -19,6 +19,7 @@ export default function EditOwnProfile() {
    const [repeatPassword, setRepeatPassword] = useState("");
    const navigate = useNavigate();
 
+   //function to fetch the user data to fill the form
    useEffect(() => {
       fetchUserData(token)
          .then((response) => {
@@ -40,12 +41,14 @@ export default function EditOwnProfile() {
          });
    }, []);
 
+   // Function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
 
+   // Function to handle the submit of the edit form
    const handleSubmit = (e) => {
       e.preventDefault();
       let user = {};
@@ -56,33 +59,59 @@ export default function EditOwnProfile() {
       if (lastname !== "") user.lastName = lastname;
       if (photo !== "") user.photoURL = photo;
 
-      editUserData(user, token).then((response) => {
-         if (response.ok) {
-            handleAlert("User is updated successfully :)", false);
+      if (phone.length >= 7 && phone.length <= 20) {
+         if (isValidURL(photo)) {
+            if (firstname.length >= 1 && firstname.length <= 25 && lastname.length >= 1 && lastname.length <= 25) {
+               editUserData(user, token).then((response) => {
+                  if (response.ok) {
+                     handleAlert("User updated successfully :)", false);
 
-            navigate("/scrum", { replace: true });
-         } else if (response.status === 409) {
-            handleAlert("Email already exists :(", true);
-         } else if (response.status === 400) {
-            handleAlert("Invalid data :(", true);
-         } else if (response.status === 401) {
-            navigate("/", { replace: true });
+                     navigate("/scrum", { replace: true });
+                  } else if (response.status === 409) {
+                     handleAlert("Email already exists :(", true);
+                  } else if (response.status === 400) {
+                     handleAlert("Invalid data :(", true);
+                  } else if (response.status === 401) {
+                     navigate("/", { replace: true });
+                  }
+               });
+            } else {
+               handleAlert("First Name and Last Name must have between 1 and 25 characters :(", true);
+            }
+         } else {
+            handleAlert("Invalid photo url :(", true);
          }
-      });
+      } else {
+         handleAlert("Phone must have between 7 and 20 characters :(", true);
+      }
    };
 
+   function isValidURL(url) {
+      try {
+         new URL(url);
+         return true;
+      } catch (error) {
+         return false;
+      }
+   }
+
+   // Function to handle the save of the new password
    const handleSavePassword = () => {
-      if (newPassword === repeatPassword) {
-         editPassword(oldPassword, newPassword, token).then((response) => {
-            if (response.ok) {
-               handleAlert("Password is updated successfully :)", false);
-               navigate("/scrum", { replace: true });
-            } else {
-               handleAlert("Invalid data :(", true);
-            }
-         });
+      if (newPassword.length >= 4) {
+         if (newPassword === repeatPassword) {
+            editPassword(oldPassword, newPassword, token).then((response) => {
+               if (response.ok) {
+                  handleAlert("Password is updated successfully :)", false);
+                  navigate("/scrum", { replace: true });
+               } else {
+                  handleAlert("Invalid data :(", true);
+               }
+            });
+         } else {
+            handleAlert("Passwords do not match :(", true);
+         }
       } else {
-         handleAlert("Passwords do not match :(", true);
+         handleAlert("Password must have at least 4 characters :(", true);
       }
    };
 

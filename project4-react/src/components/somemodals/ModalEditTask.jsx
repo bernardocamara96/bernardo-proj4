@@ -20,6 +20,7 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
    const { token, role } = userStore.getState().user;
    const username = usernameStore.getState().username;
 
+   // Fetch all categories
    useEffect(() => {
       getAllCategories(token)
          .then((response) => {
@@ -37,16 +38,21 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
          });
    }, []);
 
+   //function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
+
+   //function to set the confirm messages
    const handleAction = (message, callback) => {
       setConfirmMessage(message);
       setConfirmVisible(true);
       setConfirmCallback(callback);
    };
+
+   // Function to handle the submit of the edit task form
    const handleSubmit = (e) => {
       e.preventDefault();
       if (modalType !== "deletedTask") {
@@ -93,6 +99,7 @@ export default function ModalEditTask({ data, setModalVisibility, setFetchTrigge
       }
    };
 
+   // Function to handle the delete of the task in the edit task modal
    const handleDelete = (e) => {
       e.preventDefault();
       if (modalType !== "deletedTask") {

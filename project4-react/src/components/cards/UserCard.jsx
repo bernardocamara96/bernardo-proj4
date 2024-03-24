@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 export default function UserCard({ username, role, isDeleted, photoURL, handleClick, activeTrigger, searchTerm }) {
    const [isActive, setIsActive] = useState(false);
 
+   // Function to handle the click on the user card, it will fetch the user data and set the user active so the black border appears
    function handleClickDiv() {
       handleClick(username);
       setTimeout(() => {
@@ -11,6 +12,7 @@ export default function UserCard({ username, role, isDeleted, photoURL, handleCl
       }, 0.1);
    }
 
+   // Function to set the user as non active, so the black border disappears
    useEffect(
       (event) => {
          setIsActive(false);
@@ -18,6 +20,7 @@ export default function UserCard({ username, role, isDeleted, photoURL, handleCl
       [activeTrigger]
    );
 
+   // Function to determine if the user should be visible or not, when searching by username
    const determineUserVisibility = (searchTerm) => {
       if (searchTerm === "") return true;
       const lowerCaseTitle = username.toLowerCase();
@@ -27,6 +30,7 @@ export default function UserCard({ username, role, isDeleted, photoURL, handleCl
 
    const [userVisibility, setUserVisibility] = useState(() => determineUserVisibility(searchTerm));
 
+   //   // Update user visibility whenever searchTerm changes
    useEffect(() => {
       setUserVisibility(determineUserVisibility(searchTerm));
    }, [searchTerm]);

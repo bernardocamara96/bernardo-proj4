@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+//store for filter data
 const filterStore = create(
    persist(
       (set) => ({

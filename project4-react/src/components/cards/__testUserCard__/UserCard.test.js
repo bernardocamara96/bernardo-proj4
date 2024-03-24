@@ -2,20 +2,6 @@ import { render, screen } from "@testing-library/react";
 import UserCard from "../UserCard";
 
 describe("UserCard", () => {
-   test("renders UserCard component without crashing", () => {
-      render(
-         <UserCard
-            username="Test User"
-            role="developer"
-            isDeleted={false}
-            photoURL="test.jpg"
-            handleClick={() => {}}
-            activeTrigger={false}
-            searchTerm=""
-         />
-      );
-   });
-
    test("displays the correct username", () => {
       render(
          <UserCard

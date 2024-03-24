@@ -39,6 +39,7 @@ export default function ListUsers() {
    const [visibility, setVisibility] = useState("hidden");
    const [backgroundColor, setBackgroundColor] = useState("transparent");
 
+   // Load users
    useEffect(() => {
       loadUsers(token).then((response) => {
          if (!response.ok) {
@@ -50,6 +51,7 @@ export default function ListUsers() {
       });
    }, [statusChangeTrigger]);
 
+   //function to set the confirm modals
    const handleAction = (message, callback) => {
       setConfirmMessage(message);
       setConfirmVisible(true);
@@ -57,6 +59,7 @@ export default function ListUsers() {
       setConfirmCallback(callback);
    };
 
+   //function to handle the click on a user card and fetch the user data
    function handleClick(username) {
       setImageBackground("none");
       setActiveTrigger(!activeTrigger);
@@ -85,44 +88,69 @@ export default function ListUsers() {
       });
    }
 
+   //function to set the alert messages
+
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
+
+   //function to handle the submit of the edit user form
    function handleSubmit(e) {
       e.preventDefault();
-      handleAction("Are you sure you want to edit this user", () => {
-         if (changeTrigger) {
-            editOtherUser(
-               token,
-               usernameClicked,
-               role,
-               firstName,
-               lastName,
-               email,
-               newEmail,
-               phone,
-               photo,
-               isDeleted
-            ).then((response) => {
-               if (response.ok) {
-                  setChangeTrigger(false);
-                  handleAlert("User edited :)", false);
-                  if (statusChange) {
-                     setStatusChangeTrigger(!statusChangeTrigger);
-                     setStatusChange(false);
-                  }
+      if (changeTrigger) {
+         if (phone.length >= 7 && phone.length <= 20) {
+            if (isValidURL(photo)) {
+               if (firstName.length >= 1 && firstName.length <= 25 && lastName.length >= 1 && lastName.length <= 25) {
+                  handleAction("Are you sure you want to edit this user?", () => {
+                     editOtherUser(
+                        token,
+                        usernameClicked,
+                        role,
+                        firstName,
+                        lastName,
+                        email,
+                        newEmail,
+                        phone,
+                        photo,
+                        isDeleted
+                     ).then((response) => {
+                        if (response.ok) {
+                           setChangeTrigger(false);
+                           handleAlert("User edited :)", false);
+                           if (statusChange) {
+                              setStatusChangeTrigger(!statusChangeTrigger);
+                              setStatusChange(false);
+                           }
+                        } else {
+                           handleAlert("Error editing user :(", true);
+                        }
+                     });
+                  });
                } else {
-                  handleAlert("Error editing user :(", true);
+                  handleAlert("First Name and Last Name must have between 1 and 25 characters :(", true);
                }
-            });
+            } else {
+               handleAlert("Invalid photo url :(", true);
+            }
          } else {
-            handleAlert("No changes were made", true);
+            handleAlert("Phone must have between 7 and 20 characters :(", true);
          }
-      });
+      } else {
+         handleAlert("No changes were made", true);
+      }
    }
 
+   function isValidURL(url) {
+      try {
+         new URL(url);
+         return true;
+      } catch (error) {
+         return false;
+      }
+   }
+   //function to handle the delete of a user
    function handleDelete() {
       handleAction("Are you sure you want to delete this user?", () => {
          deletePermanentlyUser(token, usernameClicked).then((response) => {
@@ -140,6 +168,7 @@ export default function ListUsers() {
       });
    }
 
+   //function to handle the delete of all tasks from a user
    function handleDeleteTasks() {
       handleAction("Are you sure you want to delete all the tasks from this user?", () => {
          deleteTasksByUser(token, usernameClicked).then((response) => {
@@ -244,7 +273,7 @@ export default function ListUsers() {
                               Email
                            </label>
                            <input
-                              type="text"
+                              type="email"
                               name="email"
                               id="email-field"
                               maxLength="35"

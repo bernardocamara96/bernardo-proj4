@@ -13,12 +13,14 @@ export default function ModalTasks({ token, setModalVisibility, setFetchTrigger 
    const [taskEndDate, setTaskEndDate] = useState("");
    const [category_type, setCategory_type] = useState("No_Category");
 
+   //function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
 
+   // Fetch all categories
    useEffect(() => {
       getAllCategories(token)
          .then((response) => {
@@ -35,6 +37,8 @@ export default function ModalTasks({ token, setModalVisibility, setFetchTrigger 
             console.error("Error fetching data:", error);
          });
    }, []);
+
+   // Function to handle the submit of the add task form
    const handleSubmit = (e) => {
       e.preventDefault();
       addTaskBE(token, taskTitle, taskDescription, taskPriority, taskStartDate, taskEndDate, category_type).then(

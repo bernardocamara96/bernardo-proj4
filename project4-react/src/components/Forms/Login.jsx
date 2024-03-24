@@ -20,11 +20,14 @@ export default function Login() {
       navigate("/register", { state: { type: "normalRegister" } });
    };
 
+   // Function to set the alert messages
    function handleAlert(message, error) {
       alertStore.getState().setMessage(message);
       alertStore.getState().setVisible(true);
       alertStore.getState().setError(error);
    }
+
+   // Function to handle the submit of the login form
    const handleSubmit = (e) => {
       e.preventDefault();
       loginAttempt(username, password)
@@ -52,6 +55,7 @@ export default function Login() {
          });
    };
 
+   // Clear filters and user storage
    useEffect(() => {
       updateUsernameFilter("default");
       updateCategoryFilter("default");

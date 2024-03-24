@@ -16,9 +16,13 @@ export default function NonDraggableTask({
    searchTerm,
 }) {
    const [buttonVisibility, setButtonVisibility] = useState("hidden");
+
+   // Function to handle the double click on a task, it will pass the task data to the parent component
    const handleDoubleClick = () => {
       onDoubleClick({ id, title, description, username_author, category_type, priority, startDate, endDate });
    };
+
+   // Function to determine task visibility based on the search term
    const determineTaskVisibility = (searchTerm) => {
       if (searchTerm === "") return true;
       const lowerCaseTitle = title.toLowerCase();
@@ -27,7 +31,6 @@ export default function NonDraggableTask({
       return lowerCaseTitle.includes(searchTerm) || lowerCaseDescription.includes(searchTerm) ? true : false;
    };
 
-   // State for task visibility
    const [taskVisibility, setTaskVisibility] = useState(() => determineTaskVisibility(searchTerm));
 
    // Update task visibility whenever searchTerm changes
