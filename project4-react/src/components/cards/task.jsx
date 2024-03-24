@@ -174,7 +174,7 @@ export default function Task({
                {((type != "non-draggable" &&
                   (username_author === username || user.role === "productOwner" || user.role === "scrumMaster")) ||
                   (type === "non-draggable" && user.role === "productOwner")) && (
-                  <button class="btn-dlt" style={{ visibility: buttonVisibility }} onClick={handleDelete}>
+                  <button className="btn-dlt" style={{ visibility: buttonVisibility }} onClick={handleDelete}>
                      <img src={trashIcon} alt="del" />
                   </button>
                )}

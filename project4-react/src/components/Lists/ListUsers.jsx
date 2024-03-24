@@ -119,6 +119,7 @@ export default function ListUsers() {
                         if (response.ok) {
                            setChangeTrigger(false);
                            handleAlert("User edited :)", false);
+                           setEmail(newEmail);
                            if (statusChange) {
                               setStatusChangeTrigger(!statusChangeTrigger);
                               setStatusChange(false);
