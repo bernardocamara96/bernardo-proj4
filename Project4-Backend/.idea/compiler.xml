@@ -6,8 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="bernardo-proj4" />
+        <module name="Project4-Backend" />
         <module name="tiago-bernardo-proj3" />
-        <module name="Project3-Backend" />
       </profile>
     </annotationProcessing>
   </component>

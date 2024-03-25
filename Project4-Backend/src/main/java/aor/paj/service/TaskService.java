@@ -17,7 +17,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 
 
-@Path("/task")
+@Path("/tasks")
 public class TaskService {
     @Inject
     TaskBean taskBean;
@@ -34,7 +34,7 @@ public class TaskService {
      * creates a new task with a category with the name "type"
      */
     @POST
-    @Path("/create/{type}")
+    @Path("/{type}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createTask(@HeaderParam("token") String token,@PathParam("type")String categoryType, TaskDto a) {
         if (userBean.tokenValidator(token)) {
@@ -69,7 +69,7 @@ public class TaskService {
      * retrieves all tasks
      */
     @GET
-    @Path("/all")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTasks(@HeaderParam("token") String token) {
         if(userBean.tokenValidator(token)){
@@ -140,7 +140,7 @@ public class TaskService {
      *retrieves the number of tasks with the specified username as author
      */
     @GET
-    @Path("/tasksnumber/{username}")
+    @Path("/number/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTasksNumberByUser(@HeaderParam("token") String token,@PathParam("username") String username) {
         if(userBean.tokenValidator(token)){
@@ -160,7 +160,7 @@ public class TaskService {
      * retrieves all tasks from the specified user
      */
     @GET
-    @Path("/allbyuser")
+    @Path("/byuser")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTasksByUser(@HeaderParam("token") String token,@QueryParam("username") String username) {
         if(userBean.tokenValidator(token)){
@@ -181,7 +181,7 @@ public class TaskService {
      * retrieves all tasks with the specified category
      */
     @GET
-    @Path("/allbycategory")
+    @Path("/bycategory")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllTasksByCategory(@HeaderParam("token")String token, @QueryParam("category")String category_type){
         if(userBean.tokenValidator(token)){
@@ -201,7 +201,7 @@ public class TaskService {
      * retrieves all tasks with the specified username and category
      */
     @GET
-    @Path("/allbyuserandcategory")
+    @Path("/byuserandcategory")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTasksByUserAndCategory(@HeaderParam("token")String token,@QueryParam("username")String username,@QueryParam("category")String category){
         if(userBean.tokenValidator(token)){
@@ -270,7 +270,7 @@ public class TaskService {
      *method to delete temporarily all tasks from the specified user
      */
     @DELETE
-    @Path("/deletetemp/all/{username}")
+    @Path("/temp/all/{username}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteAllTasksTemporarily(@PathParam("username")String username,@HeaderParam("token")String token){
         if(userBean.tokenValidator(token)){
@@ -288,7 +288,7 @@ public class TaskService {
      *deletes permanently the specified task
      */
     @DELETE
-    @Path("/delete/{id}")
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteTaskPermanently(@PathParam("id")int id, @HeaderParam("token")String token){
         if(userBean.tokenValidator(token)){

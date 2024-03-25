@@ -107,6 +107,7 @@ public class UserBean implements Serializable {
         return false;
     }
     public String login(LoginDto user){
+        System.out.println(user.getUsername());
         UserEntity userEntity = userDao.findUserByUsername(user.getUsername());
         if(userEntity !=null){
             if(!userEntity.getDeleted()){

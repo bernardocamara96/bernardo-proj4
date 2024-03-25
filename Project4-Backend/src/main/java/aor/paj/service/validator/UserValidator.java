@@ -63,6 +63,13 @@ public class UserValidator {
                 role.equals(userRoleManager.PRODUCT_OWNER);
     }
     public boolean validateUserOnRegistration(User user) {
+        System.out.println(validateUsername(user.getUsername()));
+        System.out.println(validatePassword(user.getPassword()));
+        System.out.println(validateEmail(user.getEmail()));
+        System.out.println(validatePhone(user.getPhoneNumber()));
+        System.out.println(validateName(user.getFirstName(), user.getLastName()));
+        System.out.println( validatePhotoURL(user.getPhotoURL()));
+        System.out.println(validateRole(user.getRole()));
         return validateUsername(user.getUsername()) &&
                 validatePassword(user.getPassword()) &&
                 validateEmail(user.getEmail()) &&

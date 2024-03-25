@@ -10,11 +10,11 @@ import java.time.LocalDate;
 @Table (name="task")
 @NamedQuery(name="Task.findTaskById", query="SELECT t FROM TaskEntity t WHERE t.id=:id")
 @NamedQuery(name="Task.getAllTasks",query="SELECT t FROM TaskEntity t")
-@NamedQuery(name="Task.findTasksByUser", query="SELECT t FROM TaskEntity t WHERE t.user=:user")
-@NamedQuery(name="Task.findTasksByCategory", query="SELECT t FROM TaskEntity t WHERE t.category=:category")
+@NamedQuery(name="Task.findTasksByUser", query="SELECT t FROM TaskEntity t WHERE t.user=:user ORDER BY t.priority DESC,CASE WHEN t.startDate IS NULL THEN 1 ELSE 0 END, t.startDate ASC,CASE WHEN t.endDate IS NULL THEN 1 ELSE 0 END, t.endDate ASC")
+@NamedQuery(name="Task.findTasksByCategory", query="SELECT t FROM TaskEntity t WHERE t.category=:category ORDER BY t.priority DESC,CASE WHEN t.startDate IS NULL THEN 1 ELSE 0 END, t.startDate ASC,CASE WHEN t.endDate IS NULL THEN 1 ELSE 0 END, t.endDate ASC")
 @NamedQuery(name="Task.deleteTasksBId", query="DELETE FROM TaskEntity t WHERE t.id = :id")
-@NamedQuery(name="Task.findTasksByDeleted", query="SELECT t FROM TaskEntity t WHERE t.deleted=:deleted")
-@NamedQuery(name="Task.findTasksByCategoryAndUser", query="SELECT t FROM TaskEntity t WHERE t.category = :category AND t.user = :user")
+@NamedQuery(name="Task.findTasksByDeleted", query="SELECT t FROM TaskEntity t WHERE t.deleted=:deleted ORDER BY t.priority DESC,CASE WHEN t.startDate IS NULL THEN 1 ELSE 0 END, t.startDate ASC,CASE WHEN t.endDate IS NULL THEN 1 ELSE 0 END, t.endDate ASC")
+@NamedQuery(name="Task.findTasksByCategoryAndUser", query="SELECT t FROM TaskEntity t WHERE t.category = :category AND t.user = :user ORDER BY t.priority DESC,CASE WHEN t.startDate IS NULL THEN 1 ELSE 0 END, t.startDate ASC,CASE WHEN t.endDate IS NULL THEN 1 ELSE 0 END, t.endDate ASC")
 public class TaskEntity implements Serializable {
 
     private static final long longSerialVersionID=1L;

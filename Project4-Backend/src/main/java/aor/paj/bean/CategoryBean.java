@@ -46,8 +46,7 @@ public class CategoryBean implements Serializable {
             categoryEntity.setType(type);
             categoryEntity.setAuthor(user);
             categoryDao.persist(categoryEntity);
-            CategoryDto categoryDto=convertCategoryEntitytoCategoryDto(categoryEntity);
-            return categoryDto;
+            return convertCategoryEntitytoCategoryDto(categoryEntity);
         }
         else return null;
     }

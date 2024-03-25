@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 
-@Path("/user")
+@Path("/users")
 
 public class UserService {
     @EJB
@@ -37,7 +37,7 @@ public class UserService {
      * "A new user was created".
      */
     @POST
-    @Path("/add")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addUser(User user) {
         if (!userValidator.validateUserOnRegistration(user)) {
@@ -82,7 +82,7 @@ public class UserService {
      * If no photo URL or first name is found for the given username, returns a status code 404 (Not Found) with the error message "No photo or name found".
      */
     @GET
-    @Path("/getphotoandname")
+    @Path("/photoandname")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPhoto(@HeaderParam("token")String token) {
         if (userBean.tokenValidator(token)) {
@@ -103,7 +103,7 @@ public class UserService {
      * (without the password) in JSON format.
      */
     @GET
-    @Path("/userinfo")
+    @Path("/info")
     @Produces(MediaType.APPLICATION_JSON)
     public Response userInfo(@HeaderParam("token") String token) {
         if (userBean.tokenValidator(token)) {
@@ -120,7 +120,7 @@ public class UserService {
      */
 
     @GET
-    @Path("/userinfo/{username}")
+    @Path("/info/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response userInfoByusername(@HeaderParam("token") String token , @PathParam("username") String username) {
         if(username == null)
@@ -140,7 +140,7 @@ public class UserService {
      * or users with specific roles that allow viewing all user accounts.
      */
      @GET
-     @Path("/all")
+     @Path("/")
      @Produces(MediaType.APPLICATION_JSON)
      public Response getAllUsers(@HeaderParam("token") String token) {
          if (userBean.tokenValidator(token)) {
@@ -174,7 +174,7 @@ public class UserService {
      * their own information and not that of others unless specifically authorized.
      */
     @PATCH
-    @Path("/edituserdata")
+    @Path("/data")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editUserData(User updatedUser, @HeaderParam("token") String token) {
         if (userBean.tokenValidator(token)) {
@@ -197,7 +197,7 @@ public class UserService {
      */
 
      @PATCH
-    @Path("/editotheruser")
+    @Path("/otheruser")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response adminEditUserData(User updatedUser, @HeaderParam("token") String token,
                                       @HeaderParam("userToChangeUsername") String username) {
@@ -224,7 +224,7 @@ public class UserService {
      * is crucial for maintaining user account security.
      */
     @POST
-    @Path("/edituserpassword")
+    @Path("/password")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editUserPassword(UserNewPassword updatedPassword, @HeaderParam("token") String token) {
         if (userBean.tokenValidator(token) && userBean.oldPasswordConfirmation(token, updatedPassword.getPassword(),
@@ -244,7 +244,7 @@ public class UserService {
      * typically reserved for administrators, to execute this action.
      */
     @DELETE
-    @Path("/permanetelydelete")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteTaskPermanently(@HeaderParam("token")String token, @HeaderParam("userToDeleteUsername")String username){
         if(userBean.tokenValidator(token)){

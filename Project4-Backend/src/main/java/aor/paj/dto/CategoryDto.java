@@ -40,6 +40,15 @@ public class CategoryDto {
         public void setOwner_username(String owner_username) {
             this.owner_username = owner_username;
         }
+
+    @Override
+    public String toString() {
+        return "CategoryDto{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", owner_username='" + owner_username + '\'' +
+                '}';
     }
+}
 
 

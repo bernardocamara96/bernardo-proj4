@@ -13,9 +13,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+
 import java.util.ArrayList;
 
-@Path("/category")
+@Path("/categories")
 public class CategoryService {
 
     @Inject
@@ -30,7 +31,7 @@ public class CategoryService {
      *  retrieves information about a specific category identified by its ID
      */
     @GET
-    @Path("/all")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCategories(@HeaderParam("token")String token){
         if(userBean.tokenValidator(token)){
@@ -49,7 +50,7 @@ public class CategoryService {
      */
 
     @POST
-    @Path("/add/{type}")
+    @Path("/{type}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCategory(@PathParam("type")String type, @HeaderParam("token") String token){
         if(userBean.tokenValidator(token)) {
@@ -57,6 +58,7 @@ public class CategoryService {
             if(user.getRole().equals(userRoleManager.PRODUCT_OWNER)) {
                 CategoryDto categoryDto=categoryBean.addCategory(user, type);
                 if (categoryDto!=null) {
+
                     return Response.status(200).entity(categoryDto).build();
                 } else return Response.status(400).entity("That category type already exists").build();
             } else return Response.status(403).entity("User permissions violated").build();
@@ -69,7 +71,7 @@ public class CategoryService {
      */
 
     @PATCH
-    @Path("/edit/{oldType}/{newType}")
+    @Path("/{oldType}/{newType}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response editCategory (@PathParam("newType") String newType,@PathParam("oldType")String oldType, @HeaderParam("token")String token){
         if(userBean.tokenValidator(token)){
@@ -88,7 +90,7 @@ public class CategoryService {
      * method to delete a category
      */
     @DELETE
-    @Path("/delete/{type}")
+    @Path("/{type}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteCaTEGORY(@PathParam("type")String type, @HeaderParam("token")String token){
         if(userBean.tokenValidator(token)){
